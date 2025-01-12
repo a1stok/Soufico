@@ -24,7 +24,7 @@ connectToDB();
 
 app.use("/api/users", userRoutes);
 
-app.post("/api/basket", async (req, res) => {
+app.post("/api/users/basket", async (req, res) => {
   const { uid, basket } = req.body;
 
   if (!uid || !Array.isArray(basket)) {
@@ -55,7 +55,7 @@ app.post("/api/basket", async (req, res) => {
   }
 });
 
-app.get("/api/basket/:uid", async (req, res) => {
+app.get("/api/users/basket/:uid", async (req, res) => {
   const { uid } = req.params;
 
   if (!uid) {
@@ -89,7 +89,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err);
+  console.error("Unhandled error:", err.message);
   res.status(500).json({ error: "Internal Server Error" });
 });
 

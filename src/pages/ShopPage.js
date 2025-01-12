@@ -105,7 +105,7 @@ const ShopPage = () => {
     const userId = user ? user.uid : null;
   
     if (!userId) {
-      alert("User not logged in.");
+      alert("Please log in to place an order.");
       return;
     }
   
@@ -115,7 +115,7 @@ const ShopPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, basket }),
+        body: JSON.stringify({ uid: userId, basket }),
       });
   
       if (response.ok) {

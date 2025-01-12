@@ -5,18 +5,11 @@ const router = express.Router();
 router.post("/save", async (req, res) => {
   console.log("POST /save - Request received:", req.body);
 
-  const { uid, name, photoURL } = req.body;
+  const { uid, name, photoURL, basket } = req.body;
 
-  if (!uid || !name || !photoURL) {
-    const missingFields = [
-      !uid && "uid",
-      !name && "name",
-      !photoURL && "photoURL",
-    ].filter(Boolean);
-
-    console.log("POST /save - Missing fields:", missingFields);
+  if (!uid) {
     return res.status(400).json({
-      error: `Missing required fields: ${missingFields.join(", ")}`,
+      error: "Missing required field: uid.",
     });
   }
 
@@ -24,17 +17,33 @@ router.post("/save", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    console.log("POST /save - Connecting to MongoDB...");
+    let updateData = {
+      lastUpdated: new Date(),
+    };
+
+    if (name) updateData.name = name;
+    if (photoURL) updateData.photoURL = photoURL;
+
+    if (basket && Array.isArray(basket)) {
+      updateData.basket = basket.map((item) => ({
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      }));
+    }
+
     await usersCollection.updateOne(
       { uid },
-      { $set: { name, photoURL, lastUpdated: new Date() } },
+      { $set: updateData },
       { upsert: true }
     );
-    console.log("POST /save - User data saved successfully.");
-    res.status(200).json({ message: "User data saved successfully!" });
+
+    console.log("POST /save - User data and basket saved successfully.");
+    res.status(200).json({ message: "User data and basket saved successfully!" });
   } catch (error) {
-    console.error("Error saving user data:", error);
-    res.status(500).json({ error: "Failed to save user data." });
+    console.error("Error saving user data or basket:", error);
+    res.status(500).json({ error: "Failed to save user data or basket." });
   }
 });
 
@@ -43,15 +52,14 @@ router.post("/basket", async (req, res) => {
 
   const { uid, basket } = req.body;
 
-  if (!uid || !basket) {
+  if (!uid || !Array.isArray(basket)) {
     const missingFields = [
       !uid && "uid",
-      !basket && "basket",
+      !Array.isArray(basket) && "basket (must be an array)",
     ].filter(Boolean);
 
-    console.log("POST /basket - Missing fields:", missingFields);
     return res.status(400).json({
-      error: `Missing required fields: ${missingFields.join(", ")}`,
+      error: `Missing or invalid fields: ${missingFields.join(", ")}`,
     });
   }
 
@@ -59,7 +67,6 @@ router.post("/basket", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    console.log("POST /basket - Updating basket for uid:", uid);
     await usersCollection.updateOne(
       { uid },
       { $set: { basket, lastUpdated: new Date() } },
@@ -85,8 +92,6 @@ router.get("/:uid", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    console.log("GET /:uid - Fetching data for uid:", uid);
-
     const user = await usersCollection.findOne({ uid });
     if (!user) {
       return res.status(404).json({ error: "User not found." });
@@ -110,17 +115,13 @@ router.delete("/:uid", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    console.log("DELETE /:uid - Deleting user with uid:", uid);
-
     const result = await usersCollection.deleteOne({ uid });
-
-    console.log("DELETE /:uid - MongoDB result:", result);
 
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: "User not found." });
     }
 
-    return res.status(200).json({ message: "User deleted successfully!" });
+    return res.status(200).json({ message: "User and basket data deleted successfully!" });
   } catch (error) {
     console.error("Error deleting user data:", error);
     return res.status(500).json({ error: "Failed to delete user." });
