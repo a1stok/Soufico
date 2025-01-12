@@ -1,18 +1,21 @@
-require("dotenv").config(); 
-
+require("dotenv").config();
 const { MongoClient } = require("mongodb");
 
 console.log("MONGO_URI:", process.env.MONGO_URI);
 
-const client = new MongoClient(process.env.MONGO_URI);
-
 let db;
+const client = new MongoClient(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 async function connectToDB() {
   try {
-    await client.connect();
-    db = client.db("Soufico"); 
-    console.log("Connected to MongoDB");
+    if (!db) {
+      await client.connect();
+      db = client.db("Soufico"); 
+      console.log("Connected to MongoDB");
+    }
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     process.exit(1); 
