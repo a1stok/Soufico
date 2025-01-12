@@ -48,17 +48,23 @@ const MyAccountPage = () => {
       return;
     }
 
-    try {
-      const formData = new FormData();
-      formData.append("uid", uid);
-      formData.append("name", name);
-      if (photo) {
-        formData.append("photo", photo); 
-      }
+    const missingFields = [];
+    if (!uid) missingFields.push("uid");
+    if (!name) missingFields.push("name");
+    if (!photoURL) missingFields.push("photoURL");
 
+    if (missingFields.length > 0) {
+      alert(`Missing required fields: ${missingFields.join(", ")}`);
+      return;
+    }
+
+    try {
       const response = await fetch("https://soufico.onrender.com/api/users/save", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uid, name, photoURL }),
       });
 
       if (response.ok) {
