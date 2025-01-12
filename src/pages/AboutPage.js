@@ -1,8 +1,8 @@
 import React from 'react';
 import './AboutPage.css';
 import { motion } from 'framer-motion';
-import me from '../images/me.png'; // Replace with your photo
-import ProjectCarousel from '../components/ProjectCarousel/ProjectCarousel'; // Reusable carousel component
+import me from '../images/me.png'; //gonn be my site, so no user's photo
+import ProjectCarousel from '../components/ProjectCarousel/ProjectCarousel'; 
 
 function AboutPage() {
   return (

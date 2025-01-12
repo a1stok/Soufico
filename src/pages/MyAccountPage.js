@@ -4,8 +4,9 @@ import "./MyAccountPage.css";
 
 const MyAccountPage = () => {
   const location = useLocation();
-  const uid = location.state?.uid; 
+  const uid = location.state?.uid;
   const [name, setName] = useState("");
+  const [photo, setPhoto] = useState(null);
   const [photoURL, setPhotoURL] = useState("");
   const [basket, setBasket] = useState([]);
 
@@ -34,6 +35,7 @@ const MyAccountPage = () => {
 
   const handlePhotoChange = (e) => {
     if (e.target.files[0]) {
+      setPhoto(e.target.files[0]);
       const reader = new FileReader();
       reader.onload = () => setPhotoURL(reader.result);
       reader.readAsDataURL(e.target.files[0]);
@@ -50,20 +52,20 @@ const MyAccountPage = () => {
       const formData = new FormData();
       formData.append("uid", uid);
       formData.append("name", name);
-      formData.append("photoURL", photoURL);
+      if (photo) {
+        formData.append("photo", photo); 
+      }
 
-      const response = await fetch("http://localhost:3000/api/users/save", {
+      const response = await fetch("https://soufico.onrender.com/api/users/save", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ uid, name, photoURL }),
+        body: formData,
       });
 
       if (response.ok) {
         alert("User information updated!");
       } else {
-        alert("Failed to update user information.");
+        const errorResponse = await response.json();
+        alert(`Failed to update user information: ${errorResponse.error}`);
       }
     } catch (error) {
       console.error("Error saving user info:", error);
