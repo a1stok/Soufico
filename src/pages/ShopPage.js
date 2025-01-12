@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ShopPage.css";
+import { auth } from "../firebaseConfig";
+
 
 import letterboxImg from "../images/letterbox.png";
 import sponsormeImg from "../images/sponsorme.jpg";
@@ -93,9 +95,43 @@ const ShopPage = () => {
   };
 
   const basketTotal = basket.reduce((total, item) => total + item.price * item.quantity, 0);
-  const handleOrder = () => {
-    navigate("/my-account", { state: { basket } });
+  const handleOrder = async () => {
+    if (basket.length === 0) {
+      alert("Your basket is empty!");
+      return;
+    }
+  
+    const user = auth.currentUser;
+    const userId = user ? user.uid : null;
+  
+    if (!userId) {
+      alert("User not logged in.");
+      return;
+    }
+  
+    try {
+      const response = await fetch("https://soufico.onrender.com/api/users/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, basket }),
+      });
+  
+      if (response.ok) {
+        alert("Order placed successfully!");
+        navigate("/my-account", { state: { basket } });
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to place order: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("An error occurred while placing the order. Please try again.");
+    }
   };
+  
+  
 
   return (
     <div className="shop-page">

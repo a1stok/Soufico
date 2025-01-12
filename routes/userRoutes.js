@@ -2,15 +2,22 @@ const express = require("express");
 const { getDB } = require("../db");
 const router = express.Router();
 
- 
 router.post("/save", async (req, res) => {
   console.log("POST /save - Request received:", req.body);
 
   const { uid, name, photoURL } = req.body;
 
   if (!uid || !name || !photoURL) {
-    console.log("POST /save - Missing required fields.");
-    return res.status(400).json({ error: "Missing required fields: uid, name, or photoURL." });
+    const missingFields = [
+      !uid && "uid",
+      !name && "name",
+      !photoURL && "photoURL",
+    ].filter(Boolean);
+
+    console.log("POST /save - Missing fields:", missingFields);
+    return res.status(400).json({
+      error: `Missing required fields: ${missingFields.join(", ")}`,
+    });
   }
 
   try {
@@ -31,7 +38,41 @@ router.post("/save", async (req, res) => {
   }
 });
 
+router.post("/basket", async (req, res) => {
+  console.log("POST /basket - Request received:", req.body);
 
+  const { uid, basket } = req.body;
+
+  if (!uid || !basket) {
+    const missingFields = [
+      !uid && "uid",
+      !basket && "basket",
+    ].filter(Boolean);
+
+    console.log("POST /basket - Missing fields:", missingFields);
+    return res.status(400).json({
+      error: `Missing required fields: ${missingFields.join(", ")}`,
+    });
+  }
+
+  try {
+    const db = getDB();
+    const usersCollection = db.collection("users");
+
+    console.log("POST /basket - Updating basket for uid:", uid);
+    await usersCollection.updateOne(
+      { uid },
+      { $set: { basket, lastUpdated: new Date() } },
+      { upsert: true }
+    );
+
+    console.log("POST /basket - Basket data saved successfully.");
+    res.status(200).json({ message: "Basket data saved successfully!" });
+  } catch (error) {
+    console.error("Error saving basket data:", error);
+    res.status(500).json({ error: "Failed to save basket data." });
+  }
+});
 
 router.get("/:uid", async (req, res) => {
   const { uid } = req.params;
@@ -57,7 +98,6 @@ router.get("/:uid", async (req, res) => {
     return res.status(500).json({ error: "Failed to fetch user data." });
   }
 });
-
 
 router.delete("/:uid", async (req, res) => {
   const { uid } = req.params;
