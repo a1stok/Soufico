@@ -2,7 +2,6 @@ const express = require("express");
 const { getDB } = require("../db");
 const router = express.Router();
 
-// Save or Update User Data
 router.post("/save", async (req, res) => {
   const { uid, name, photoURL } = req.body;
 
@@ -14,14 +13,18 @@ router.post("/save", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    // Debugging: Log the request body
     console.log("Request body:", req.body);
 
-    // Upsert (insert or update) user data
     await usersCollection.updateOne(
-      { uid }, // Match by uid
-      { $set: { name, photoURL } }, // Update name and photoURL
-      { upsert: true } // Insert if not found
+      { uid }, 
+      { 
+        $set: { 
+          name, 
+          photoURL, 
+          lastUpdated: new Date() 
+        } 
+      },
+      { upsert: true } 
     );
 
     res.status(200).json({ message: "User data saved successfully!" });
@@ -31,7 +34,6 @@ router.post("/save", async (req, res) => {
   }
 });
 
-// Get User Data
 router.get("/:uid", async (req, res) => {
   const { uid } = req.params;
 
@@ -43,7 +45,6 @@ router.get("/:uid", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    // Find user by uid
     const user = await usersCollection.findOne({ uid });
     if (!user) {
       return res.status(404).json({ error: "User not found." });
@@ -56,7 +57,6 @@ router.get("/:uid", async (req, res) => {
   }
 });
 
-// Delete User Data
 router.delete("/:uid", async (req, res) => {
   const { uid } = req.params;
 
@@ -68,7 +68,6 @@ router.delete("/:uid", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    // Delete user by uid
     const result = await usersCollection.deleteOne({ uid });
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: "User not found." });
