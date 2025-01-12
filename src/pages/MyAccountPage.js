@@ -4,10 +4,9 @@ import "./MyAccountPage.css";
 
 const MyAccountPage = () => {
   const location = useLocation();
-  const uid = location.state?.uid;
-  const [name, setName] = useState("");
-  const [photo, setPhoto] = useState(null);
-  const [photoURL, setPhotoURL] = useState("");
+  const uid = location.state?.uid || localStorage.getItem("uid"); 
+  const [name, setName] = useState(localStorage.getItem("name") || ""); 
+  const [photoURL, setPhotoURL] = useState(localStorage.getItem("photoURL") || ""); 
   const [basket, setBasket] = useState([]);
 
   useEffect(() => {
@@ -23,6 +22,10 @@ const MyAccountPage = () => {
         setName(userData.name || "");
         setPhotoURL(userData.photoURL || "");
         setBasket(userData.basket || []);
+
+        localStorage.setItem("uid", uid);
+        localStorage.setItem("name", userData.name || "");
+        localStorage.setItem("photoURL", userData.photoURL || "");
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -35,7 +38,6 @@ const MyAccountPage = () => {
 
   const handlePhotoChange = (e) => {
     if (e.target.files[0]) {
-      setPhoto(e.target.files[0]);
       const reader = new FileReader();
       reader.onload = () => setPhotoURL(reader.result);
       reader.readAsDataURL(e.target.files[0]);
@@ -48,27 +50,24 @@ const MyAccountPage = () => {
       return;
     }
 
-    const missingFields = [];
-    if (!uid) missingFields.push("uid");
-    if (!name) missingFields.push("name");
-    if (!photoURL) missingFields.push("photoURL");
-
-    if (missingFields.length > 0) {
-      alert(`Missing required fields: ${missingFields.join(", ")}`);
-      return;
-    }
-
     try {
+      const formData = new FormData();
+      formData.append("uid", uid);
+      formData.append("name", name);
+      formData.append("photoURL", photoURL);
+
       const response = await fetch("https://soufico.onrender.com/api/users/save", {
         method: "POST",
+        body: JSON.stringify({ uid, name, photoURL }),
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ uid, name, photoURL }),
       });
 
       if (response.ok) {
         alert("User information updated!");
+        localStorage.setItem("name", name);
+        localStorage.setItem("photoURL", photoURL);
       } else {
         const errorResponse = await response.json();
         alert(`Failed to update user information: ${errorResponse.error}`);
