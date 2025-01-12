@@ -15,7 +15,7 @@ const MyAccountPage = () => {
       if (!uid) return;
 
       try {
-        const response = await fetch(`http://localhost:3000/api/users/${uid}`);
+        const response = await fetch(`https://soufico.onrender.com/api/users/${uid}`);
         if (!response.ok) {
           throw new Error("Failed to fetch user data.");
         }
