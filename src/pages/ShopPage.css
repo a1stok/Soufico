@@ -1,0 +1,297 @@
+.shop-page {
+  padding: 20px;
+  text-align: center;
+}
+
+.shop-page h1 {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+}
+
+.service-list {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.service-block {
+  display: flex;
+  align-items: center;
+  width: 90%;
+  max-width: 550px;
+  padding: 25px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  background-color: #f9f9f9;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.service-block:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.hover11 figure img {
+  width: 160px;
+  height: 160px;
+  margin-right: 25px;
+  object-fit: cover;
+  border-radius: 10px;
+  opacity: 1;
+  -webkit-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.hover11 figure:hover img {
+  opacity: 0.85;
+}
+
+.service-text {
+  flex: 1;
+}
+
+.service-title {
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+
+.service-description {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.service-price {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+  .service-list {
+      flex-direction: column;
+      gap: 20px;
+  }
+
+  .service-block {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+  }
+
+  .hover11 figure img {
+      margin-right: 0;
+      margin-bottom: 15px;
+  }
+
+  .service-title {
+      font-size: 1.4rem;
+  }
+
+  .service-description {
+      font-size: 0.9rem;
+  }
+
+  .service-price {
+      font-size: 1.1rem;
+  }
+}
+
+.add-to-basket-button {
+  margin-top: 10px;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-to-basket-button:hover {
+  background-color: #0056b3;
+}
+
+.basket-summary {
+  margin-top: 50px;
+  padding: 20px;
+  border-top: 2px solid #ddd;
+  text-align: left;
+}
+
+.basket-summary h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.basket-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.basket-item-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 15px;
+}
+
+.basket-item-text h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.basket-item-text p {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0;
+}
+
+.basket-total {
+  margin-top: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.custom-price-input {
+  margin: 10px 0;
+  padding: 10px;
+  width: 180px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease-in-out;
+}
+
+.custom-price-input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.button-81 {
+  background-color: #fff;
+  border: 0 solid #e2e8f0;
+  border-radius: 1.5rem;
+  box-sizing: border-box;
+  color: #0d172a;
+  cursor: pointer;
+  display: inline-block;
+  font-family: "Basier circle", -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 1rem 1.6rem;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0px 1px 2px rgba(166, 175, 195, 0.25);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-81:hover {
+  background-color: #1e293b;
+  color: #fff;
+}
+
+.button-sponsor {
+  background-color: #fff;
+  color: #0d172a;
+}
+
+.button-sponsor:hover {
+  background-color: #d9d9d9;
+  color: #000;
+}
+
+.button-playlist {
+  background-color: #fff;
+  color: #0d172a;
+}
+
+.button-playlist:hover {
+  background-color: #d64545;
+  color: #fff;
+}
+
+@media (min-width: 768px) {
+  .button-81 {
+      font-size: 1.125rem;
+      padding: 1rem 2rem;
+  }
+}
+
+.button-55 {
+  align-self: center;
+  background-color: #fff;
+  background-image: none;
+  background-position: 0 90%;
+  background-repeat: repeat no-repeat;
+  background-size: 4px 3px;
+  border-radius: 15px 225px 255px 15px 15px 255px 225px 15px;
+  border-style: solid;
+  border-width: 2px;
+  box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
+  box-sizing: border-box;
+  color: #41403e;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Neucha, sans-serif;
+  font-size: 1rem;
+  line-height: 23px;
+  outline: none;
+  padding: .75rem;
+  text-decoration: none;
+  transition: all 235ms ease-in-out;
+  border-bottom-left-radius: 15px 255px;
+  border-bottom-right-radius: 225px 15px;
+  border-top-left-radius: 255px 15px;
+  border-top-right-radius: 15px 225px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-55:hover {
+  box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
+  transform: translate3d(0, 2px, 0);
+}
+
+.button-55:focus {
+  box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
+}
+
+.order-button {
+  width: 120px;
+  height: 40px;
+  font-size: 0.9rem;
+  padding: 0;
+  margin-top: 10px;
+  margin-left: 0;
+}
+
+.order-button:hover {
+  background-color: #218838;
+  color: white;
+}
+
+.basket-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}

@@ -1,0 +1,111 @@
+.about-page-container {
+    font-family: 'Roboto', sans-serif;
+    background: #f9f9f9;
+    min-height: 100vh;
+    padding: 20px 0px ;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #333;
+  }
+  
+  .header-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .photo-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 5px solid #ddd;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .name-title {
+    text-align: left;
+  }
+  
+  .name {
+    font-size: 2.5em;
+    color: #333;
+    margin: 0;
+  }
+  
+  .role {
+    font-size: 1.2em;
+    color: #777;
+  }
+  
+  .intro-section {
+    max-width: 800px;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .intro-text {
+    font-size: 1.2em;
+    color: #555;
+    line-height: 1.6em;
+  }
+  
+  .interests-section {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  
+  .interests-title {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #444;
+  }
+  
+  .interests-list {
+    list-style: none;
+    padding: 0;
+    font-size: 1em;
+    font-weight: 300;
+    color: #555;
+  }
+  
+  .interests-list li {
+    margin: 5px 0;
+  }
+  
+  .projects-section {
+    text-align: center;
+    width: 100%;
+  }
+  
+  .projects-title {
+    font-size: 2em;
+    margin-bottom: 30px;
+    color: #444;
+  }
+  
+  .project {
+    margin-bottom: 50px;
+  }
+  
+  .project-title {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .project-description {
+    font-size: 1em;
+    color: #555;
+    line-height: 1.5em;
+    margin-top: 20px;
+  }
+  
