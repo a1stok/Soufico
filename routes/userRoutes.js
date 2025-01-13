@@ -43,15 +43,15 @@ router.post("/basket", async (req, res) => {
 
   const { uid, basket } = req.body;
 
-  if (!uid || !basket) {
+  if (!uid || !Array.isArray(basket)) {
     const missingFields = [
       !uid && "uid",
-      !basket && "basket",
+      !Array.isArray(basket) && "basket (must be an array)",
     ].filter(Boolean);
 
     console.log("POST /basket - Missing fields:", missingFields);
     return res.status(400).json({
-      error: `Missing required fields: ${missingFields.join(", ")}`,
+      error: `Missing or invalid fields: ${missingFields.join(", ")}`,
     });
   }
 
@@ -77,7 +77,7 @@ router.post("/basket", async (req, res) => {
 router.post("/complete-purchase", async (req, res) => {
   const { uid, basket } = req.body;
 
-  if (!uid || !basket) {
+  if (!uid || !Array.isArray(basket)) {
     return res.status(400).json({ error: "Missing required fields: uid or basket" });
   }
 
@@ -85,27 +85,25 @@ router.post("/complete-purchase", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    const user = await usersCollection.findOne({ uid });
-    if (!user) {
-      return res.status(404).json({ error: "User not found." });
-    }
+    console.log("POST /complete-purchase - Processing purchase for uid:", uid);
 
     await usersCollection.updateOne(
       { uid },
       {
-        $set: { basket: [] }, 
+        $set: { basket: [] }, // Clear the basket
         $push: {
           purchases: {
             $each: basket.map((item) => ({
               ...item,
-              purchaseDate: new Date(), 
+              purchaseDate: new Date(), // Add purchase date
             })),
-            $position: 0, 
+            $position: 0, // Add recent purchases at the top
           },
         },
       }
     );
 
+    console.log("POST /complete-purchase - Purchase completed successfully.");
     res.status(200).json({ message: "Purchase completed successfully!" });
   } catch (error) {
     console.error("Error completing purchase:", error);
@@ -131,10 +129,10 @@ router.get("/:uid", async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    return res.status(200).json(user);
+    res.status(200).json(user);
   } catch (error) {
     console.error("Error fetching user data:", error);
-    return res.status(500).json({ error: "Failed to fetch user data." });
+    res.status(500).json({ error: "Failed to fetch user data." });
   }
 });
 
@@ -153,16 +151,15 @@ router.delete("/:uid", async (req, res) => {
 
     const result = await usersCollection.deleteOne({ uid });
 
-    console.log("DELETE /:uid - MongoDB result:", result);
-
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: "User not found." });
     }
 
-    return res.status(200).json({ message: "User deleted successfully!" });
+    console.log("DELETE /:uid - User deleted successfully.");
+    res.status(200).json({ message: "User deleted successfully!" });
   } catch (error) {
     console.error("Error deleting user data:", error);
-    return res.status(500).json({ error: "Failed to delete user." });
+    res.status(500).json({ error: "Failed to delete user." });
   }
 });
 
