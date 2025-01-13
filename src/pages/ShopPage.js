@@ -119,8 +119,8 @@ const ShopPage = () => {
       });
   
       if (response.ok) {
-        alert("Items added to basket. Visit your account to complete the purchase.");
-        navigate("/my-account");
+        alert("Order placed successfully!");
+        navigate("/my-account", { state: { basket } });
       } else {
         const errorData = await response.json();
         alert(`Failed to place order: ${errorData.error}`);
@@ -130,7 +130,6 @@ const ShopPage = () => {
       alert("An error occurred while placing the order. Please try again.");
     }
   };
-  
   
   
   
