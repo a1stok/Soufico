@@ -9,6 +9,7 @@ const MyAccountPage = () => {
   const [name, setName] = useState(localStorage.getItem("name") || "");
   const [photoURL, setPhotoURL] = useState(localStorage.getItem("photoURL") || "");
   const [basket, setBasket] = useState([]);
+  const [purchases, setPurchases] = useState([]); 
   const [paymentError, setPaymentError] = useState(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
@@ -31,6 +32,7 @@ const MyAccountPage = () => {
         setName(userData.name || "");
         setPhotoURL(userData.photoURL || "");
         setBasket(userData.basket || []);
+        setPurchases(userData.purchases || []); 
 
         localStorage.setItem("uid", uid);
         localStorage.setItem("name", userData.name || "");
@@ -83,13 +85,14 @@ const MyAccountPage = () => {
   };
 
   const basketTotal = basket.reduce((total, item) => total + item.price * item.quantity, 0);
+  const purchasesTotal = purchases.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const handlePayment = async () => {
     if (basket.length === 0) {
       alert("Your basket is empty!");
       return;
     }
-  
+
     try {
       const response = await fetch("https://soufico.onrender.com/api/payment/create-payment-intent", {
         method: "POST",
@@ -98,37 +101,38 @@ const MyAccountPage = () => {
           "Content-Type": "application/json",
         },
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to create payment intent.");
       }
-  
+
       const { clientSecret } = await response.json();
-  
+
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
         },
       });
-  
+
       if (error) {
         console.error("Payment failed:", error);
         setPaymentError(error.message);
       } else if (paymentIntent.status === "succeeded") {
         setPaymentSuccess(true);
-          const purchaseResponse = await fetch("https://soufico.onrender.com/api/users/complete-purchase", {
+
+        const purchaseResponse = await fetch("https://soufico.onrender.com/api/users/complete-purchase", {
           method: "POST",
           body: JSON.stringify({ uid, basket }),
           headers: {
             "Content-Type": "application/json",
           },
         });
-  
+
         if (purchaseResponse.ok) {
           const { purchases } = await purchaseResponse.json();
           setBasket([]); 
+          setPurchases(purchases);
           alert("Purchase completed successfully!");
-          console.log("Purchases:", purchases);
         } else {
           console.error("Failed to complete purchase.");
         }
@@ -138,7 +142,6 @@ const MyAccountPage = () => {
       setPaymentError("An error occurred while processing your payment. Please try again.");
     }
   };
-  
 
   return (
     <div className="my-account-page">
@@ -200,6 +203,26 @@ const MyAccountPage = () => {
           {paymentError && <p style={{ color: "red" }}>{paymentError}</p>}
           {paymentSuccess && <p style={{ color: "green" }}>Payment Successful!</p>}
         </div>
+      </div>
+
+      <div className="glass-container purchases-summary">
+        <h2>Your Purchases</h2>
+        {purchases.length > 0 ? (
+          purchases.map((item) => (
+            <div key={item.id} className="basket-item">
+              <img src={item.image} alt={item.name} className="basket-item-image" />
+              <div className="basket-item-text">
+                <h3>
+                  {item.name} {item.quantity > 1 && `x${item.quantity}`}
+                </h3>
+                <p>${(item.price * item.quantity).toFixed(2)}</p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>You have no purchases yet.</p>
+        )}
+        <h3 className="basket-total">Total: ${purchasesTotal.toFixed(2)}</h3>
       </div>
     </div>
   );

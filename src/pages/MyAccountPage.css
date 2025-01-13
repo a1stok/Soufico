@@ -134,3 +134,22 @@
   text-align: right;
   margin-top: 10px;
 }
+.purchases-summary {
+  margin-top: 20px;
+}
+
+.purchases-summary h2 {
+  color: #0d172a;
+  margin-bottom: 15px;
+}
+
+.purchases-summary .basket-item {
+  margin-bottom: 15px;
+}
+
+.purchases-summary .basket-total {
+  text-align: right;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 10px;
+}
