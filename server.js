@@ -5,6 +5,7 @@ const path = require("path");
 const { connectToDB } = require("./db");
 const userRoutes = require("./routes/userRoutes");
 const { getDB } = require("./db");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); 
 
 dotenv.config();
 
@@ -76,6 +77,32 @@ app.get("/api/users/basket/:uid", async (req, res) => {
   } catch (error) {
     console.error("Error fetching basket:", error);
     res.status(500).json({ error: "Failed to fetch basket." });
+  }
+});
+
+app.post("/api/payment/create-payment-intent", async (req, res) => {
+  const { basket } = req.body;
+
+  if (!basket || !Array.isArray(basket)) {
+    return res.status(400).json({ error: "Invalid basket format." });
+  }
+
+  const totalAmount = basket.reduce(
+    (sum, item) => sum + item.price * item.quantity * 100,
+    0
+  );
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalAmount,
+      currency: "usd",
+      automatic_payment_methods: { enabled: true },
+    });
+
+    res.status(200).json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    console.error("Error creating payment intent:", error);
+    res.status(500).json({ error: "Failed to create payment intent." });
   }
 });
 
