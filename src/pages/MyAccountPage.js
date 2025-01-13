@@ -89,7 +89,7 @@ const MyAccountPage = () => {
       alert("Your basket is empty!");
       return;
     }
-
+  
     try {
       const response = await fetch("https://soufico.onrender.com/api/payment/create-payment-intent", {
         method: "POST",
@@ -98,31 +98,47 @@ const MyAccountPage = () => {
           "Content-Type": "application/json",
         },
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to create payment intent.");
       }
-
+  
       const { clientSecret } = await response.json();
-
+  
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
         },
       });
-
+  
       if (error) {
         console.error("Payment failed:", error);
         setPaymentError(error.message);
       } else if (paymentIntent.status === "succeeded") {
         setPaymentSuccess(true);
-        alert("Payment successful!");
+          const purchaseResponse = await fetch("https://soufico.onrender.com/api/users/complete-purchase", {
+          method: "POST",
+          body: JSON.stringify({ uid, basket }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+  
+        if (purchaseResponse.ok) {
+          const { purchases } = await purchaseResponse.json();
+          setBasket([]); 
+          alert("Purchase completed successfully!");
+          console.log("Purchases:", purchases);
+        } else {
+          console.error("Failed to complete purchase.");
+        }
       }
     } catch (error) {
       console.error("Error during payment:", error);
       setPaymentError("An error occurred while processing your payment. Please try again.");
     }
   };
+  
 
   return (
     <div className="my-account-page">
