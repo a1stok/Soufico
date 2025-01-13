@@ -22,6 +22,7 @@ const MyAccountPage = () => {
         console.error("User ID is missing.");
         return;
       }
+
       try {
         const response = await fetch(`https://soufico.onrender.com/api/users/${uid}`);
         if (!response.ok) {
@@ -32,13 +33,15 @@ const MyAccountPage = () => {
         setPhotoURL(userData.photoURL || "");
         setBasket(userData.basket || []);
         setPurchases(userData.purchases || []);
+
+        localStorage.setItem("uid", uid);
+        localStorage.setItem("name", userData.name || "");
+        localStorage.setItem("photoURL", userData.photoURL || "");
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
-    fetchUserData();
-  }, [uid]);
-  
+
     fetchUserData();
   }, [uid]);
 
@@ -89,7 +92,7 @@ const MyAccountPage = () => {
       alert("Your basket is empty!");
       return;
     }
-
+  
     try {
       const response = await fetch("https://soufico.onrender.com/api/payment/create-payment-intent", {
         method: "POST",
@@ -98,25 +101,31 @@ const MyAccountPage = () => {
           "Content-Type": "application/json",
         },
       });
-
+  
       if (!response.ok) {
-        throw new Error("Failed to create payment intent.");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create payment intent.");
       }
-
-      const { clientSecret } = await response.json();
-
+  
+      const data = await response.json();
+      const clientSecret = data?.clientSecret;
+  
+      if (!clientSecret) {
+        throw new Error("Payment intent response is missing clientSecret.");
+      }
+  
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
         },
       });
-
+  
       if (error) {
-        console.error("Payment failed:", error);
         setPaymentError(error.message);
+        console.error("Payment failed:", error);
       } else if (paymentIntent.status === "succeeded") {
         setPaymentSuccess(true);
-
+  
         const purchaseResponse = await fetch("https://soufico.onrender.com/api/users/complete-purchase", {
           method: "POST",
           body: JSON.stringify({ uid, basket }),
@@ -124,21 +133,24 @@ const MyAccountPage = () => {
             "Content-Type": "application/json",
           },
         });
-
+  
         if (purchaseResponse.ok) {
           const { purchases } = await purchaseResponse.json();
-          setBasket([]);
-          setPurchases(purchases);
+          setBasket([]); 
+          setPurchases(purchases); 
           alert("Purchase completed successfully!");
         } else {
-          console.error("Failed to complete purchase.");
+          const errorData = await purchaseResponse.json();
+          console.error("Failed to complete purchase:", errorData);
+          throw new Error(errorData.message || "Failed to complete purchase.");
         }
       }
     } catch (error) {
-      console.error("Error during payment:", error);
       setPaymentError("An error occurred while processing your payment. Please try again.");
+      console.error("Error during payment:", error);
     }
   };
+  
 
   return (
     <div className="my-account-page">
