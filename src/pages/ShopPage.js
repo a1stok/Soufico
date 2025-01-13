@@ -112,15 +112,15 @@ const ShopPage = () => {
     try {
       const response = await fetch("https://soufico.onrender.com/api/users/order", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uid: userId, basket }),
       });
   
       if (response.ok) {
-        alert("Order placed successfully!");
-        navigate("/my-account", { state: { basket } });
+        const { transactionId } = await response.json();
+        alert(`Order placed successfully! Your transaction ID is: ${transactionId}`);
+        setBasket([]);
+        navigate("/my-account", { state: { basket: [], transactionId } });
       } else {
         const errorData = await response.json();
         alert(`Failed to place order: ${errorData.error}`);
@@ -131,9 +131,6 @@ const ShopPage = () => {
     }
   };
   
-  
-  
-
   return (
     <div className="shop-page">
       <h1>My Services</h1>

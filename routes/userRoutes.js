@@ -1,4 +1,5 @@
 const express = require("express");
+const { v4: uuidv4 } = require("uuid");
 const { getDB } = require("../db");
 const router = express.Router();
 
@@ -86,6 +87,7 @@ router.post("/order", async (req, res) => {
   try {
     const db = getDB();
     const usersCollection = db.collection("users");
+    const transactionId = uuidv4();
 
     await usersCollection.updateOne(
       { uid },
@@ -96,6 +98,7 @@ router.post("/order", async (req, res) => {
             $each: basket.map((item) => ({
               ...item,
               purchaseDate: new Date(), 
+              transactionId,
             })),
             $position: 0,
           },
@@ -104,7 +107,7 @@ router.post("/order", async (req, res) => {
       { upsert: true }
     );
 
-    res.status(200).json({ message: "Order placed successfully!" });
+    res.status(200).json({ message: "Order placed successfully!", transactionId });
   } catch (error) {
     console.error("Error placing order:", error);
     res.status(500).json({ error: "Failed to place order." });

@@ -11,7 +11,8 @@ const MyAccountPage = () => {
   const [basket, setBasket] = useState([]);
   const [paymentError, setPaymentError] = useState(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [purchases, setPurchases] = useState([]); 
+  const [purchases, setPurchases] = useState([]);
+  const [transactionId, setTransactionId] = useState(location.state?.transactionId || null);
   const stripe = useStripe();
   const elements = useElements();
 
@@ -31,7 +32,7 @@ const MyAccountPage = () => {
         setName(userData.name || "");
         setPhotoURL(userData.photoURL || "");
         setBasket(userData.basket || []);
-        setPurchases(userData.purchases || []); 
+        setPurchases(userData.purchases || []);
 
         localStorage.setItem("uid", uid);
         localStorage.setItem("name", userData.name || "");
@@ -90,7 +91,7 @@ const MyAccountPage = () => {
       alert("Your basket is empty!");
       return;
     }
-  
+
     try {
       const response = await fetch("https://soufico.onrender.com/api/payment/create-payment-intent", {
         method: "POST",
@@ -99,50 +100,53 @@ const MyAccountPage = () => {
           "Content-Type": "application/json",
         },
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to create payment intent.");
       }
-  
+
       const { clientSecret } = await response.json();
-  
+
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
         },
       });
-  
+
       if (error) {
-        console.error("Payment failed:", error);
         setPaymentError(error.message);
       } else if (paymentIntent.status === "succeeded") {
         setPaymentSuccess(true);
-          const purchaseResponse = await fetch("https://soufico.onrender.com/api/users/complete-purchase", {
+        const purchaseResponse = await fetch("https://soufico.onrender.com/api/users/complete-purchase", {
           method: "POST",
           body: JSON.stringify({ uid, basket }),
           headers: {
             "Content-Type": "application/json",
           },
         });
-  
+
         if (purchaseResponse.ok) {
           const { purchases } = await purchaseResponse.json();
-          setBasket([]); 
+          setBasket([]);
+          setPurchases(purchases);
+          setTransactionId(paymentIntent.id);
           alert("Purchase completed successfully!");
-          console.log("Purchases:", purchases);
         } else {
           console.error("Failed to complete purchase.");
         }
       }
     } catch (error) {
-      console.error("Error during payment:", error);
       setPaymentError("An error occurred while processing your payment. Please try again.");
     }
   };
-  
 
   return (
     <div className="my-account-page">
+      {transactionId && (
+        <div className="transaction-info">
+          <p>Your Transaction ID: {transactionId}</p>
+        </div>
+      )}
       <div className="glass-container">
         <h2>My Account</h2>
         <div className="profile-picture">
