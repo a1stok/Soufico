@@ -112,27 +112,23 @@ const ShopPage = () => {
     try {
       const response = await fetch("https://soufico.onrender.com/api/users/order", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ uid: userId, basket }),
       });
-    
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`Server error: ${errorText}`);
-        throw new Error(`Failed to place order. Status: ${response.status}`);
+  
+      if (response.ok) {
+        alert("Items added to basket. Visit your account to complete the purchase.");
+        navigate("/my-account");
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to place order: ${errorData.error}`);
       }
-    
-      // You can remove this line if unused:
-      const data = await response.json(); // Or log it
-      console.log("Server response data:", data); // Optional for debugging
-    
-      alert("Items added to basket. Visit your account to complete the purchase.");
-      navigate("/my-account");
     } catch (error) {
       console.error("Error placing order:", error);
       alert("An error occurred while placing the order. Please try again.");
     }
-    
   };
   
   

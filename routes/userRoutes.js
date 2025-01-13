@@ -39,45 +39,13 @@ router.post("/save", async (req, res) => {
   }
 });
 
+// Order endpoint: Save items to basket
 router.post("/order", async (req, res) => {
   const { uid, basket } = req.body;
 
-  if (!uid || !basket) {
-    return res.status(400).json({ error: "Missing required fields: uid or basket" });
-  }
-
-  try {
-    const db = getDB();
-    const usersCollection = db.collection("users");
-
-    await usersCollection.updateOne(
-      { uid },
-      { $set: { basket, lastUpdated: new Date() } },
-      { upsert: true }
-    );
-
-    res.status(200).json({ message: "Basket updated successfully!" });
-  } catch (error) {
-    console.error("Error updating basket:", error);
-    res.status(500).json({ error: "Failed to update basket." });
-  }
-});
-
-// Update basket
-router.post("/basket", async (req, res) => {
-  console.log("POST /basket - Request received:", req.body);
-
-  const { uid, basket } = req.body;
-
-  if (!uid || !Array.isArray(basket)) {
-    const missingFields = [
-      !uid && "uid",
-      !Array.isArray(basket) && "basket (must be an array)",
-    ].filter(Boolean);
-
-    console.log("POST /basket - Missing fields:", missingFields);
+  if (!uid || !basket || !Array.isArray(basket)) {
     return res.status(400).json({
-      error: `Missing or invalid fields: ${missingFields.join(", ")}`,
+      error: "Missing required fields: uid or basket (must be an array)",
     });
   }
 
@@ -85,18 +53,48 @@ router.post("/basket", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    console.log("POST /basket - Updating basket for uid:", uid);
-    await usersCollection.updateOne(
+    // Update the user's basket in MongoDB
+    const result = await usersCollection.updateOne(
       { uid },
       { $set: { basket, lastUpdated: new Date() } },
       { upsert: true }
     );
 
-    console.log("POST /basket - Basket data saved successfully.");
+    console.log("Basket update result:", result);
     res.status(200).json({ message: "Basket updated successfully!" });
   } catch (error) {
     console.error("Error updating basket:", error);
     res.status(500).json({ error: "Failed to update basket." });
+  }
+});
+
+// Fetch basket
+router.get("/basket/:uid", async (req, res) => {
+  const { uid } = req.params;
+
+  if (!uid) {
+    return res.status(400).json({ error: "Missing required field: uid." });
+  }
+
+  try {
+    const db = getDB();
+    const usersCollection = db.collection("users");
+
+    console.log("GET /basket/:uid - Fetching basket for uid:", uid);
+
+    const user = await usersCollection.findOne(
+      { uid },
+      { projection: { basket: 1 } }
+    );
+
+    if (!user || !user.basket) {
+      return res.status(404).json({ error: "Basket not found for user." });
+    }
+
+    res.status(200).json({ basket: user.basket });
+  } catch (error) {
+    console.error("Error fetching basket:", error);
+    res.status(500).json({ error: "Failed to fetch basket." });
   }
 });
 
@@ -130,12 +128,12 @@ router.post("/complete-purchase", async (req, res) => {
     await usersCollection.updateOne(
       { uid },
       {
-        $set: { basket: [] }, // Clear the basket
+        $set: { basket: [] }, 
         $push: {
           purchases: {
             $each: basket.map((item) => ({
               ...item,
-              purchaseDate: new Date().toISOString(), // UTC time format
+              purchaseDate: new Date().toISOString(), 
             })),
             $position: 0,
           },
