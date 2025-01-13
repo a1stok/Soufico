@@ -74,67 +74,53 @@ router.post("/basket", async (req, res) => {
   }
 });
 
-router.post("/order", async (req, res) => {
-  const { uid, basket } = req.body;
+router.post("/complete-purchase", async (req, res) => {
+  console.log("POST /complete-purchase - Request received:", req.body);
 
-  if (!uid || !basket) {
-    return res.status(400).json({
-      error: "Missing required fields: uid or basket",
-    });
+  const { uid } = req.body;
+
+  if (!uid) {
+    return res.status(400).json({ error: "Missing required field: uid" });
   }
 
   try {
     const db = getDB();
     const usersCollection = db.collection("users");
+
+    console.log("POST /complete-purchase - Fetching basket for uid:", uid);
+
+    const user = await usersCollection.findOne(
+      { uid },
+      { projection: { basket: 1 } }
+    );
+
+    if (!user || !user.basket || user.basket.length === 0) {
+      return res.status(400).json({ error: "Basket is empty or user not found." });
+    }
+
+    const basket = user.basket;
 
     await usersCollection.updateOne(
       { uid },
       {
-        $set: { basket: [] }, 
+        $set: { basket: [] }, // Clear the basket
         $push: {
           purchases: {
             $each: basket.map((item) => ({
               ...item,
-              purchaseDate: new Date(), 
+              purchaseDate: new Date().toLocaleString("en-US", { timeZone: "UTC" }),
             })),
             $position: 0,
           },
         },
-      },
-      { upsert: true }
+      }
     );
 
-    res.status(200).json({ message: "Order placed successfully!" });
-  } catch (error) {
-    console.error("Error placing order:", error);
-    res.status(500).json({ error: "Failed to place order." });
-  }
-});
-
-router.post("/complete-purchase", async (req, res) => {
-  const { uid, basket } = req.body;
-
-  if (!uid || !basket) {
-    return res.status(400).json({ error: "Missing required fields: uid or basket" });
-  }
-
-  try {
-    const db = getDB();
-    const usersCollection = db.collection("users");
-
-    const user = await usersCollection.findOne({ uid });
-    if (!user) {
-      return res.status(404).json({ error: "User not found." });
-    }
-
-    const newPurchases = user.purchases ? [...user.purchases, ...basket] : basket;
-
-    await usersCollection.updateOne(
-      { uid },
-      { $set: { basket: [], purchases: newPurchases } } 
-    );
-
-    res.status(200).json({ message: "Purchase completed successfully!", purchases: newPurchases });
+    console.log("POST /complete-purchase - Purchase completed successfully.");
+    res.status(200).json({
+      message: "Purchase completed successfully!",
+      purchases: basket,
+    });
   } catch (error) {
     console.error("Error completing purchase:", error);
     res.status(500).json({ error: "Failed to complete purchase." });
@@ -190,7 +176,7 @@ router.delete("/:uid", async (req, res) => {
     return res.status(200).json({ message: "User deleted successfully!" });
   } catch (error) {
     console.error("Error deleting user data:", error);
-    return res.status(500).json({ error: "Failed to delete user." });
+    res.status(500).json({ error: "Failed to delete user." });
   }
 });
 
