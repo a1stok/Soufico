@@ -9,7 +9,7 @@ const MyAccountPage = () => {
   const [name, setName] = useState(localStorage.getItem("name") || "");
   const [photoURL, setPhotoURL] = useState(localStorage.getItem("photoURL") || "");
   const [basket, setBasket] = useState([]);
-  const [purchases, setPurchases] = useState([]); 
+  const [purchases, setPurchases] = useState([]); // Added purchases
   const [paymentError, setPaymentError] = useState(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
@@ -32,7 +32,7 @@ const MyAccountPage = () => {
         setName(userData.name || "");
         setPhotoURL(userData.photoURL || "");
         setBasket(userData.basket || []);
-        setPurchases(userData.purchases || []); 
+        setPurchases(userData.purchases || []); // Set purchases data
 
         localStorage.setItem("uid", uid);
         localStorage.setItem("name", userData.name || "");
@@ -130,8 +130,8 @@ const MyAccountPage = () => {
 
         if (purchaseResponse.ok) {
           const { purchases } = await purchaseResponse.json();
-          setBasket([]); 
-          setPurchases(purchases);
+          setBasket([]); // Clear basket
+          setPurchases(purchases); // Update purchases
           alert("Purchase completed successfully!");
         } else {
           console.error("Failed to complete purchase.");
@@ -206,29 +206,24 @@ const MyAccountPage = () => {
       </div>
 
       <div className="glass-container purchases-summary">
-  <h2>Your Purchases</h2>
-  {purchases.length > 0 ? (
-    purchases.map((item) => (
-      <div key={item.id} className="basket-item">
-        <img src={item.image} alt={item.name} className="basket-item-image" />
-        <div className="basket-item-text">
-          <h3>
-            {item.name} {item.quantity > 1 && `x${item.quantity}`}
-          </h3>
-          <p>${(item.price * item.quantity).toFixed(2)}</p>
-          <p>
-            <strong>Purchased on:</strong>{" "}
-            {new Date(item.purchaseDate).toLocaleDateString()}
-          </p>
-        </div>
+        <h2>Your Purchases</h2>
+        {purchases.length > 0 ? (
+          purchases.map((item) => (
+            <div key={item.id} className="basket-item">
+              <img src={item.image} alt={item.name} className="basket-item-image" />
+              <div className="basket-item-text">
+                <h3>
+                  {item.name} {item.quantity > 1 && `x${item.quantity}`}
+                </h3>
+                <p>${(item.price * item.quantity).toFixed(2)}</p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>You have no purchases yet.</p>
+        )}
+        <h3 className="basket-total">Total: ${purchasesTotal.toFixed(2)}</h3>
       </div>
-    ))
-  ) : (
-    <p>You have no purchases yet.</p>
-  )}
-  <h3 className="basket-total">Total: ${purchasesTotal.toFixed(2)}</h3>
-</div>
-
     </div>
   );
 };

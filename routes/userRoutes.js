@@ -1,5 +1,4 @@
 const express = require("express");
-const { v4: uuidv4 } = require("uuid");
 const { getDB } = require("../db");
 const router = express.Router();
 
@@ -79,7 +78,9 @@ router.post("/order", async (req, res) => {
   const { uid, basket } = req.body;
 
   if (!uid || !basket) {
-    return res.status(400).json({ error: "Missing required fields: uid or basket" });
+    return res.status(400).json({
+      error: "Missing required fields: uid or basket",
+    });
   }
 
   try {
@@ -92,39 +93,37 @@ router.post("/order", async (req, res) => {
       { upsert: true }
     );
 
-    res.status(200).json({ message: "Basket updated successfully!" });
+    res.status(200).json({ message: "Order placed successfully!" });
   } catch (error) {
-    console.error("Error updating basket:", error);
-    res.status(500).json({ error: "Failed to update basket." });
+    console.error("Error placing order:", error);
+    res.status(500).json({ error: "Failed to place order." });
   }
 });
 
-
-
-
 router.post("/complete-purchase", async (req, res) => {
-  const { uid } = req.body;
+  const { uid, basket } = req.body;
 
-  if (!uid) {
-    return res.status(400).json({ error: "Missing required field: uid." });
+  if (!uid || !basket) {
+    return res.status(400).json({ error: "Missing required fields: uid or basket" });
   }
 
   try {
     const db = getDB();
     const usersCollection = db.collection("users");
 
+    // Fetch user data
     const user = await usersCollection.findOne({ uid });
-    if (!user || !user.basket || user.basket.length === 0) {
-      return res.status(400).json({ error: "Basket is empty or user not found." });
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
     }
 
-    const newPurchases = user.purchases
-      ? [...user.purchases, ...user.basket]
-      : [...user.basket];
+    // Merge purchases
+    const newPurchases = user.purchases ? [...user.purchases, ...basket] : basket;
 
+    // Update user data
     await usersCollection.updateOne(
       { uid },
-      { $set: { basket: [], purchases: newPurchases } }
+      { $set: { basket: [], purchases: newPurchases } } // Clear basket, add to purchases
     );
 
     res.status(200).json({ message: "Purchase completed successfully!", purchases: newPurchases });
@@ -133,8 +132,6 @@ router.post("/complete-purchase", async (req, res) => {
     res.status(500).json({ error: "Failed to complete purchase." });
   }
 });
-
-
 
 router.get("/:uid", async (req, res) => {
   const { uid } = req.params;
