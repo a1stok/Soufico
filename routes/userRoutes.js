@@ -79,45 +79,6 @@ router.post("/order", async (req, res) => {
   const { uid, basket } = req.body;
 
   if (!uid || !basket) {
-    return res.status(400).json({
-      error: "Missing required fields: uid or basket",
-    });
-  }
-
-  try {
-    const db = getDB();
-    const usersCollection = db.collection("users");
-    const transactionId = uuidv4();
-
-    await usersCollection.updateOne(
-      { uid },
-      {
-        $set: { basket: [] }, 
-        $push: {
-          purchases: {
-            $each: basket.map((item) => ({
-              ...item,
-              purchaseDate: new Date(), 
-              transactionId,
-            })),
-            $position: 0,
-          },
-        },
-      },
-      { upsert: true }
-    );
-
-    res.status(200).json({ message: "Order placed successfully!", transactionId });
-  } catch (error) {
-    console.error("Error placing order:", error);
-    res.status(500).json({ error: "Failed to place order." });
-  }
-});
-
-router.post("/complete-purchase", async (req, res) => {
-  const { uid, basket } = req.body;
-
-  if (!uid || !basket) {
     return res.status(400).json({ error: "Missing required fields: uid or basket" });
   }
 
@@ -125,16 +86,43 @@ router.post("/complete-purchase", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
+    await usersCollection.updateOne(
+      { uid },
+      { $set: { basket, lastUpdated: new Date() } },
+      { upsert: true }
+    );
+
+    res.status(200).json({ message: "Basket updated successfully!" });
+  } catch (error) {
+    console.error("Error updating basket:", error);
+    res.status(500).json({ error: "Failed to update basket." });
+  }
+});
+
+
+router.post("/complete-purchase", async (req, res) => {
+  const { uid } = req.body;
+
+  if (!uid) {
+    return res.status(400).json({ error: "Missing required field: uid." });
+  }
+
+  try {
+    const db = getDB();
+    const usersCollection = db.collection("users");
+
     const user = await usersCollection.findOne({ uid });
-    if (!user) {
-      return res.status(404).json({ error: "User not found." });
+    if (!user || !user.basket) {
+      return res.status(404).json({ error: "No items in basket to purchase." });
     }
 
-    const newPurchases = user.purchases ? [...user.purchases, ...basket] : basket;
+    const newPurchases = user.purchases
+      ? [...user.purchases, ...user.basket]
+      : [...user.basket];
 
     await usersCollection.updateOne(
       { uid },
-      { $set: { basket: [], purchases: newPurchases } } 
+      { $set: { basket: [], purchases: newPurchases } }
     );
 
     res.status(200).json({ message: "Purchase completed successfully!", purchases: newPurchases });
@@ -143,6 +131,7 @@ router.post("/complete-purchase", async (req, res) => {
     res.status(500).json({ error: "Failed to complete purchase." });
   }
 });
+
 
 router.get("/:uid", async (req, res) => {
   const { uid } = req.params;

@@ -117,19 +117,18 @@ const ShopPage = () => {
       });
   
       if (response.ok) {
-        const { transactionId } = await response.json();
-        alert(`Order placed successfully! Your transaction ID is: ${transactionId}`);
-        setBasket([]);
-        navigate("/my-account", { state: { basket: [], transactionId } });
+        alert("Items added to your basket! Go to your account to complete the purchase.");
+        navigate("/my-account");
       } else {
         const errorData = await response.json();
-        alert(`Failed to place order: ${errorData.error}`);
+        alert(`Failed to add items to the basket: ${errorData.error}`);
       }
     } catch (error) {
-      console.error("Error placing order:", error);
-      alert("An error occurred while placing the order. Please try again.");
+      console.error("Error adding items to basket:", error);
+      alert("An error occurred while adding items to the basket. Please try again.");
     }
   };
+  
   
   return (
     <div className="shop-page">
