@@ -39,6 +39,30 @@ router.post("/save", async (req, res) => {
   }
 });
 
+router.post("/order", async (req, res) => {
+  const { uid, basket } = req.body;
+
+  if (!uid || !basket) {
+    return res.status(400).json({ error: "Missing required fields: uid or basket" });
+  }
+
+  try {
+    const db = getDB();
+    const usersCollection = db.collection("users");
+
+    await usersCollection.updateOne(
+      { uid },
+      { $set: { basket, lastUpdated: new Date() } },
+      { upsert: true }
+    );
+
+    res.status(200).json({ message: "Basket updated successfully!" });
+  } catch (error) {
+    console.error("Error updating basket:", error);
+    res.status(500).json({ error: "Failed to update basket." });
+  }
+});
+
 // Update basket
 router.post("/basket", async (req, res) => {
   console.log("POST /basket - Request received:", req.body);
