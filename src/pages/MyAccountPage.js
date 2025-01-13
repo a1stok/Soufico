@@ -9,7 +9,7 @@ const MyAccountPage = () => {
   const [name, setName] = useState(localStorage.getItem("name") || "");
   const [photoURL, setPhotoURL] = useState(localStorage.getItem("photoURL") || "");
   const [basket, setBasket] = useState([]);
-  const [purchases, setPurchases] = useState([]); // Added purchases
+  const [purchases, setPurchases] = useState([]);
   const [paymentError, setPaymentError] = useState(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
@@ -32,7 +32,7 @@ const MyAccountPage = () => {
         setName(userData.name || "");
         setPhotoURL(userData.photoURL || "");
         setBasket(userData.basket || []);
-        setPurchases(userData.purchases || []); // Set purchases data
+        setPurchases(userData.purchases || []);
 
         localStorage.setItem("uid", uid);
         localStorage.setItem("name", userData.name || "");
@@ -130,8 +130,8 @@ const MyAccountPage = () => {
 
         if (purchaseResponse.ok) {
           const { purchases } = await purchaseResponse.json();
-          setBasket([]); // Clear basket
-          setPurchases(purchases); // Update purchases
+          setBasket([]);
+          setPurchases(purchases);
           alert("Purchase completed successfully!");
         } else {
           console.error("Failed to complete purchase.");

@@ -2,10 +2,9 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const path = require("path");
-const { connectToDB } = require("./db");
+const { connectToDB, getDB } = require("./db");
 const userRoutes = require("./routes/userRoutes");
-const { getDB } = require("./db");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); 
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 dotenv.config();
 
@@ -77,6 +76,52 @@ app.get("/api/users/basket/:uid", async (req, res) => {
   } catch (error) {
     console.error("Error fetching basket:", error);
     res.status(500).json({ error: "Failed to fetch basket." });
+  }
+});
+
+app.post("/api/users/complete-purchase", async (req, res) => {
+  const { uid } = req.body;
+
+  if (!uid) {
+    return res.status(400).json({ error: "Missing required field: uid." });
+  }
+
+  try {
+    const db = getDB();
+    const usersCollection = db.collection("users");
+
+    const user = await usersCollection.findOne({ uid }, { projection: { basket: 1 } });
+
+    if (!user || !user.basket || user.basket.length === 0) {
+      return res.status(400).json({ error: "Basket is empty or user not found." });
+    }
+
+    const basket = user.basket;
+
+    await usersCollection.updateOne(
+      { uid },
+      {
+        $set: { basket: [] },
+        $push: {
+          purchases: {
+            $each: basket.map((item) => ({
+              ...item,
+              purchaseDate: new Date().toISOString(),
+            })),
+            $position: 0,
+          },
+        },
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Purchase completed successfully!",
+      purchases: basket,
+    });
+  } catch (error) {
+    console.error("Error completing purchase:", error);
+    res.status(500).json({ error: "Failed to complete purchase." });
   }
 });
 
