@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import "./MyAccountPage.css";
 
 const MyAccountPage = () => {
   const location = useLocation();
-  const uid = location.state?.uid || localStorage.getItem("uid"); 
-  const [name, setName] = useState(localStorage.getItem("name") || ""); 
-  const [photoURL, setPhotoURL] = useState(localStorage.getItem("photoURL") || ""); 
+  const uid = location.state?.uid || localStorage.getItem("uid");
+  const [name, setName] = useState(localStorage.getItem("name") || "");
+  const [photoURL, setPhotoURL] = useState(localStorage.getItem("photoURL") || "");
   const [basket, setBasket] = useState([]);
+  const [paymentError, setPaymentError] = useState(null);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  const stripe = useStripe();
+  const elements = useElements();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -51,11 +57,6 @@ const MyAccountPage = () => {
     }
 
     try {
-      const formData = new FormData();
-      formData.append("uid", uid);
-      formData.append("name", name);
-      formData.append("photoURL", photoURL);
-
       const response = await fetch("https://soufico.onrender.com/api/users/save", {
         method: "POST",
         body: JSON.stringify({ uid, name, photoURL }),
@@ -79,6 +80,46 @@ const MyAccountPage = () => {
   };
 
   const basketTotal = basket.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  const handlePayment = async () => {
+    if (basket.length === 0) {
+      alert("Your basket is empty!");
+      return;
+    }
+
+    try {
+      const response = await fetch("https://soufico.onrender.com/api/payment/create-payment-intent", {
+        method: "POST",
+        body: JSON.stringify({ basket }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create payment intent.");
+      }
+
+      const { clientSecret } = await response.json();
+
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+        },
+      });
+
+      if (error) {
+        console.error("Payment failed:", error);
+        setPaymentError(error.message);
+      } else if (paymentIntent.status === "succeeded") {
+        setPaymentSuccess(true);
+        alert("Payment successful!");
+      }
+    } catch (error) {
+      console.error("Error during payment:", error);
+      setPaymentError("An error occurred while processing your payment. Please try again.");
+    }
+  };
 
   return (
     <div className="my-account-page">
@@ -132,6 +173,14 @@ const MyAccountPage = () => {
           <p>Your basket is empty.</p>
         )}
         <h3 className="basket-total">Total: ${basketTotal.toFixed(2)}</h3>
+        <div>
+          <CardElement />
+          <button className="button-81 purchase-button" onClick={handlePayment}>
+            Purchase
+          </button>
+          {paymentError && <p style={{ color: "red" }}>{paymentError}</p>}
+          {paymentSuccess && <p style={{ color: "green" }}>Payment Successful!</p>}
+        </div>
       </div>
     </div>
   );
