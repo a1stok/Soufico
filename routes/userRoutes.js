@@ -89,7 +89,18 @@ router.post("/order", async (req, res) => {
 
     await usersCollection.updateOne(
       { uid },
-      { $set: { basket, lastUpdated: new Date() } },
+      {
+        $set: { basket: [] }, 
+        $push: {
+          purchases: {
+            $each: basket.map((item) => ({
+              ...item,
+              purchaseDate: new Date(), 
+            })),
+            $position: 0,
+          },
+        },
+      },
       { upsert: true }
     );
 
