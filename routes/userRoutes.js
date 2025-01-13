@@ -2,6 +2,7 @@ const express = require("express");
 const { getDB } = require("../db");
 const router = express.Router();
 
+// Save user information
 router.post("/save", async (req, res) => {
   console.log("POST /save - Request received:", req.body);
 
@@ -38,20 +39,21 @@ router.post("/save", async (req, res) => {
   }
 });
 
+// Update basket
 router.post("/basket", async (req, res) => {
   console.log("POST /basket - Request received:", req.body);
 
   const { uid, basket } = req.body;
 
-  if (!uid || !basket) {
+  if (!uid || !Array.isArray(basket)) {
     const missingFields = [
       !uid && "uid",
-      !basket && "basket",
+      !Array.isArray(basket) && "basket (must be an array)",
     ].filter(Boolean);
 
     console.log("POST /basket - Missing fields:", missingFields);
     return res.status(400).json({
-      error: `Missing required fields: ${missingFields.join(", ")}`,
+      error: `Missing or invalid fields: ${missingFields.join(", ")}`,
     });
   }
 
@@ -67,72 +69,68 @@ router.post("/basket", async (req, res) => {
     );
 
     console.log("POST /basket - Basket data saved successfully.");
-    res.status(200).json({ message: "Basket data saved successfully!" });
+    res.status(200).json({ message: "Basket updated successfully!" });
   } catch (error) {
-    console.error("Error saving basket data:", error);
-    res.status(500).json({ error: "Failed to save basket data." });
+    console.error("Error updating basket:", error);
+    res.status(500).json({ error: "Failed to update basket." });
   }
 });
 
-router.post("/order", async (req, res) => {
-  const { uid, basket } = req.body;
+// Complete purchase
+router.post("/complete-purchase", async (req, res) => {
+  console.log("POST /complete-purchase - Request received:", req.body);
 
-  if (!uid || !basket) {
-    return res.status(400).json({
-      error: "Missing required fields: uid or basket",
-    });
+  const { uid } = req.body;
+
+  if (!uid) {
+    return res.status(400).json({ error: "Missing required field: uid" });
   }
 
   try {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    await usersCollection.updateOne(
+    console.log("POST /complete-purchase - Fetching basket for uid:", uid);
+
+    const user = await usersCollection.findOne(
       { uid },
-      { $set: { basket, lastUpdated: new Date() } },
-      { upsert: true }
+      { projection: { basket: 1 } }
     );
 
-    res.status(200).json({ message: "Order placed successfully!" });
-  } catch (error) {
-    console.error("Error placing order:", error);
-    res.status(500).json({ error: "Failed to place order." });
-  }
-});
-
-router.post("/complete-purchase", async (req, res) => {
-  const { uid, basket } = req.body;
-
-  if (!uid || !basket) {
-    return res.status(400).json({ error: "Missing required fields: uid or basket" });
-  }
-
-  try {
-    const db = getDB();
-    const usersCollection = db.collection("users");
-
-    // Fetch user data
-    const user = await usersCollection.findOne({ uid });
-    if (!user) {
-      return res.status(404).json({ error: "User not found." });
+    if (!user || !user.basket || user.basket.length === 0) {
+      return res.status(400).json({ error: "Basket is empty or user not found." });
     }
 
-    // Merge purchases
-    const newPurchases = user.purchases ? [...user.purchases, ...basket] : basket;
+    const basket = user.basket;
 
-    // Update user data
     await usersCollection.updateOne(
       { uid },
-      { $set: { basket: [], purchases: newPurchases } } // Clear basket, add to purchases
+      {
+        $set: { basket: [] }, // Clear the basket
+        $push: {
+          purchases: {
+            $each: basket.map((item) => ({
+              ...item,
+              purchaseDate: new Date().toISOString(), // UTC time format
+            })),
+            $position: 0,
+          },
+        },
+      }
     );
 
-    res.status(200).json({ message: "Purchase completed successfully!", purchases: newPurchases });
+    console.log("POST /complete-purchase - Purchase completed successfully.");
+    res.status(200).json({
+      message: "Purchase completed successfully!",
+      purchases: basket,
+    });
   } catch (error) {
     console.error("Error completing purchase:", error);
     res.status(500).json({ error: "Failed to complete purchase." });
   }
 });
 
+// Fetch user data
 router.get("/:uid", async (req, res) => {
   const { uid } = req.params;
 
@@ -154,10 +152,11 @@ router.get("/:uid", async (req, res) => {
     return res.status(200).json(user);
   } catch (error) {
     console.error("Error fetching user data:", error);
-    return res.status(500).json({ error: "Failed to fetch user data." });
+    res.status(500).json({ error: "Failed to fetch user data." });
   }
 });
 
+// Delete user
 router.delete("/:uid", async (req, res) => {
   const { uid } = req.params;
 
@@ -179,10 +178,10 @@ router.delete("/:uid", async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    return res.status(200).json({ message: "User deleted successfully!" });
+    res.status(200).json({ message: "User deleted successfully." });
   } catch (error) {
-    console.error("Error deleting user data:", error);
-    return res.status(500).json({ error: "Failed to delete user." });
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: "Failed to delete user." });
   }
 });
 
