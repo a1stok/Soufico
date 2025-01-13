@@ -116,16 +116,59 @@ router.post("/complete-purchase", async (req, res) => {
       }
     );
 
-    console.log("POST /complete-purchase - Purchase completed successfully.");
-    res.status(200).json({
-      message: "Purchase completed successfully!",
-      purchases: basket,
+    router.post("/complete-purchase", async (req, res) => {
+      console.log("POST /complete-purchase - Request received:", req.body);
+    
+      const { uid } = req.body;
+    
+      if (!uid) {
+        return res.status(400).json({ error: "Missing required field: uid" });
+      }
+    
+      try {
+        const db = getDB();
+        const usersCollection = db.collection("users");
+    
+        console.log("POST /complete-purchase - Fetching basket for uid:", uid);
+    
+        const user = await usersCollection.findOne(
+          { uid },
+          { projection: { basket: 1 } }
+        );
+    
+        if (!user || !user.basket || user.basket.length === 0) {
+          return res.status(400).json({ error: "Basket is empty or user not found." });
+        }
+    
+        const basket = user.basket;
+    
+        await usersCollection.updateOne(
+          { uid },
+          {
+            $set: { basket: [] }, 
+            $push: {
+              purchases: {
+                $each: basket.map((item) => ({
+                  ...item,
+                  purchaseDate: new Date().toLocaleString("en-US", { timeZone: "UTC" }),
+                })),
+                $position: 0,
+              },
+            },
+          }
+        );
+    
+        console.log("POST /complete-purchase - Purchase completed successfully.");
+        res.status(200).json({
+          message: "Purchase completed successfully!",
+          purchases: basket,
+        });
+      } catch (error) {
+        console.error("Error completing purchase:", error);
+        res.status(500).json({ error: "Failed to complete purchase." });
+      }
     });
-  } catch (error) {
-    console.error("Error completing purchase:", error);
-    res.status(500).json({ error: "Failed to complete purchase." });
-  }
-});
+    
 
 router.get("/:uid", async (req, res) => {
   const { uid } = req.params;
