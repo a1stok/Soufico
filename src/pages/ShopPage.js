@@ -112,25 +112,28 @@ const ShopPage = () => {
     try {
       const response = await fetch("https://soufico.onrender.com/api/users/order", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ uid: userId, basket }),
       });
   
       if (response.ok) {
-        alert("Items added to your basket! Go to your account to complete the purchase.");
-        navigate("/my-account");
+        alert("Order placed successfully!");
+        navigate("/my-account", { state: { basket } });
       } else {
         const errorData = await response.json();
-        alert(`Failed to add items to the basket: ${errorData.error}`);
+        alert(`Failed to place order: ${errorData.error}`);
       }
     } catch (error) {
-      console.error("Error adding items to basket:", error);
-      alert("An error occurred while adding items to the basket. Please try again.");
+      console.error("Error placing order:", error);
+      alert("An error occurred while placing the order. Please try again.");
     }
   };
   
   
   
+
   return (
     <div className="shop-page">
       <h1>My Services</h1>
