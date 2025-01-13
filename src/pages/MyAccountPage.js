@@ -17,7 +17,10 @@ const MyAccountPage = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!uid) return;
+      if (!uid) {
+        console.error("User ID is missing.");
+        return;
+      }
 
       try {
         const response = await fetch(`https://soufico.onrender.com/api/users/${uid}`);
