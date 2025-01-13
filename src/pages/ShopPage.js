@@ -132,6 +132,7 @@ const ShopPage = () => {
   };
   
   
+  
 
   return (
     <div className="shop-page">
