@@ -92,13 +92,13 @@ router.post("/order", async (req, res) => {
       { upsert: true }
     );
 
-    console.log("Basket updated successfully for user:", uid);
     res.status(200).json({ message: "Basket updated successfully!" });
   } catch (error) {
     console.error("Error updating basket:", error);
     res.status(500).json({ error: "Failed to update basket." });
   }
 });
+
 
 
 
@@ -114,8 +114,8 @@ router.post("/complete-purchase", async (req, res) => {
     const usersCollection = db.collection("users");
 
     const user = await usersCollection.findOne({ uid });
-    if (!user || !user.basket) {
-      return res.status(404).json({ error: "No items in basket to purchase." });
+    if (!user || !user.basket || user.basket.length === 0) {
+      return res.status(400).json({ error: "Basket is empty or user not found." });
     }
 
     const newPurchases = user.purchases
@@ -133,6 +133,7 @@ router.post("/complete-purchase", async (req, res) => {
     res.status(500).json({ error: "Failed to complete purchase." });
   }
 });
+
 
 
 router.get("/:uid", async (req, res) => {
