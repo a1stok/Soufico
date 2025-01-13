@@ -92,12 +92,14 @@ router.post("/order", async (req, res) => {
       { upsert: true }
     );
 
+    console.log("Basket updated successfully for user:", uid);
     res.status(200).json({ message: "Basket updated successfully!" });
   } catch (error) {
     console.error("Error updating basket:", error);
     res.status(500).json({ error: "Failed to update basket." });
   }
 });
+
 
 
 router.post("/complete-purchase", async (req, res) => {

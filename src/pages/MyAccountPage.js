@@ -22,28 +22,24 @@ const MyAccountPage = () => {
         console.error("User ID is missing.");
         return;
       }
-
+  
       try {
         const response = await fetch(`https://soufico.onrender.com/api/users/${uid}`);
         if (!response.ok) {
           throw new Error("Failed to fetch user data.");
         }
         const userData = await response.json();
-        setName(userData.name || "");
-        setPhotoURL(userData.photoURL || "");
-        setBasket(userData.basket || []);
+        setBasket(userData.basket || []); 
         setPurchases(userData.purchases || []);
-
-        localStorage.setItem("uid", uid);
-        localStorage.setItem("name", userData.name || "");
-        localStorage.setItem("photoURL", userData.photoURL || "");
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
-
+  
     fetchUserData();
   }, [uid]);
+  
+
 
   const handleNameChange = (e) => setName(e.target.value);
 

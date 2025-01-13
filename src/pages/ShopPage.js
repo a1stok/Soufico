@@ -130,6 +130,7 @@ const ShopPage = () => {
   };
   
   
+  
   return (
     <div className="shop-page">
       <h1>My Services</h1>
