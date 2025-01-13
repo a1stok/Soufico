@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import App from "./App";
 import PaymentPage from "./pages/PaymentPage";
-import ShopPage from "./components/ShopPage"; 
+import ShopPage from "./pages/ShopPage"; 
 import MyAccountPage from "./pages/MyAccountPage"; 
 
 const rootElement = document.getElementById("root");
