@@ -12,9 +12,14 @@ const MyAccountPage = () => {
   const [purchases, setPurchases] = useState([]); 
   const [paymentError, setPaymentError] = useState(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [showPurchases, setShowPurchases] = useState(false); 
+
 
   const stripe = useStripe();
   const elements = useElements();
+  const togglePurchasesVisibility = () => {
+    setShowPurchases((prev) => !prev);
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {

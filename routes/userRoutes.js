@@ -95,12 +95,11 @@ router.post("/order", async (req, res) => {
           purchases: {
             $each: basket.map((item) => ({
               ...item,
-              purchaseDate: new Date().toLocaleString("en-US", { timeZone: "UTC" }), 
+              purchaseDate: new Date(), 
             })),
             $position: 0,
           },
         },
-        
       },
       { upsert: true }
     );
@@ -123,32 +122,24 @@ router.post("/complete-purchase", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    console.log("POST /complete-purchase - Processing purchase for uid:", uid);
+    const user = await usersCollection.findOne({ uid });
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const newPurchases = user.purchases ? [...user.purchases, ...basket] : basket;
 
     await usersCollection.updateOne(
       { uid },
-      {
-        $set: { basket: [] }, 
-        $push: {
-          purchases: {
-            $each: basket.map((item) => ({
-              ...item,
-              purchaseDate: new Date().toLocaleString("en-US", { timeZone: "UTC" }), 
-            })),
-            $position: 0,
-          },
-        },
-      }
+      { $set: { basket: [], purchases: newPurchases } } 
     );
 
-    console.log("POST /complete-purchase - Purchase completed successfully.");
-    res.status(200).json({ message: "Purchase completed successfully!" });
+    res.status(200).json({ message: "Purchase completed successfully!", purchases: newPurchases });
   } catch (error) {
     console.error("Error completing purchase:", error);
     res.status(500).json({ error: "Failed to complete purchase." });
   }
 });
-
 
 router.get("/:uid", async (req, res) => {
   const { uid } = req.params;
