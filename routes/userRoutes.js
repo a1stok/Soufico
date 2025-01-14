@@ -101,10 +101,10 @@ router.post("/order", async (req, res) => {
 });
 
 router.post("/complete-purchase", async (req, res) => {
-  const { uid, basket, transactionId } = req.body; 
+  const { uid, basket, transactionId } = req.body;
 
-  if (!uid || !basket) {
-    return res.status(400).json({ error: "Missing required fields: uid or basket" });
+  if (!uid || !basket || !transactionId) {
+    return res.status(400).json({ error: "Missing required fields: uid, basket, or transactionId" });
   }
 
   try {
@@ -115,9 +115,10 @@ router.post("/complete-purchase", async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found." });
     }
-    const newPurchases = basket.map((item) => ({
+
+    const purchases = basket.map((item) => ({
       ...item,
-      transactionId, 
+      transactionId,
       purchaseDate: new Date().toISOString(), 
     }));
 
@@ -125,11 +126,11 @@ router.post("/complete-purchase", async (req, res) => {
       { uid },
       {
         $set: { basket: [] }, 
-        $push: { purchases: { $each: newPurchases, $position: 0 } }, 
+        $push: { purchases: { $each: purchases, $position: 0 } }, 
       }
     );
 
-    res.status(200).json({ message: "Purchase completed successfully!", purchases: newPurchases });
+    res.status(200).json({ success: true, message: "Purchase completed successfully!", purchases });
   } catch (error) {
     console.error("Error completing purchase:", error);
     res.status(500).json({ error: "Failed to complete purchase." });
