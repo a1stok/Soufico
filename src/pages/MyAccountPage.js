@@ -198,14 +198,16 @@ const MyAccountPage = () => {
           <p>Your basket is empty.</p>
         )}
         <h3 className="basket-total">Total: ${basketTotal.toFixed(2)}</h3>
-        <div>
-          <CardElement />
-          <button className="button-81 purchase-button" onClick={handlePayment}>
-            Purchase
-          </button>
-          {paymentError && <p style={{ color: "red" }}>{paymentError}</p>}
-          {paymentSuccess && <p style={{ color: "green" }}>Payment Successful!</p>}
-        </div>
+        <div className="card-input-section">
+  <div className="card-input-container">
+    <CardElement />
+  </div>
+  <button className="button-81 purchase-button" onClick={handlePayment}>
+    Purchase
+  </button>
+  {paymentError && <p className="error-message">{paymentError}</p>}
+  {paymentSuccess && <p className="success-message">Payment Successful!</p>}
+</div>
       </div>
 
       <div className="glass-container purchases-summary scrollable">

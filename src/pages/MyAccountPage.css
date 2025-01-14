@@ -1,14 +1,28 @@
+body {
+  margin: 0; 
+  padding: 0; 
+  background: linear-gradient(135deg, #fdfdfd, #cfcfdf); /* Gradient background */
+  font-family: 'Jura', serif; /* Global font */
+  min-height: 100vh;
+}
+
 .my-account-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh; 
   gap: 20px;
+  padding: 20px; 
 }
 
 .glass-container {
-  width: 360px;
+  width: 380px; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+  justify-content: center; 
+  max-width: 90%; 
   padding: 20px;
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.5);
@@ -17,15 +31,24 @@
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-container:hover {
+  transform: scale(1.02); 
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3); 
 }
 
 .profile-picture {
-  margin: 20px 0;
+  margin: 20px auto;
+  display: flex; /* Centering the profile circle */
+  justify-content: center;
+  align-items: center;
 }
 
 .photo-circle {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.3);
   display: flex;
@@ -34,11 +57,17 @@
   border: 2px solid #0d172a; 
   overflow: hidden;
   cursor: pointer;
+  transition: transform 0.3s ease, border-color 0.3s ease, filter 0.3s ease;
+}
+
+.photo-circle:hover {
+  filter: brightness(1.2); /* Increase brightness on hover */
+  transform: scale(1.05); /* Slight hover enlargement */
 }
 
 .photo-placeholder {
   color: #0d172a;
-  font-size: 0.9rem;
+  font-size: 1rem; 
   font-weight: bold;
 }
 
@@ -53,15 +82,17 @@
 }
 
 .styled-input {
-  padding: 12px;
-  width: 100%;
+  padding: 14px;
+  display: block; /* Ensure input behaves as a block element */
+  margin: 10px auto; /* Center horizontally */
+  width: 80%; /* Adjust width */
+  max-width: 300px; /* Restrict maximum width */
   border: none;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.3);
   color: #0d172a;
   font-size: 1rem;
-  margin-bottom: 20px;
-  transition: border 0.3s ease;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
 .styled-input::placeholder {
@@ -108,12 +139,21 @@
   display: flex;
   align-items: center;
   margin-bottom: 15px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.basket-item:hover {
+  transform: scale(1.03); /* Slight hover enlargement */
 }
 
 .basket-item-image {
-  width: 50px;
-  height: 50px;
-  border-radius: 5px;
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
   object-fit: cover;
   margin-right: 15px;
 }
@@ -124,8 +164,9 @@
 }
 
 .basket-item-text p {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #555;
+  margin: 4px 0;
 }
 
 .basket-total {
@@ -134,11 +175,13 @@
   text-align: right;
   margin-top: 10px;
 }
+
 .purchases-summary {
   margin-top: 20px;
 }
 
 .purchases-summary h2 {
+  font-size: 1.2rem;
   color: #0d172a;
   margin-bottom: 15px;
 }
@@ -153,6 +196,7 @@
   font-weight: bold;
   margin-top: 10px;
 }
+
 .toggle-history-button {
   padding: 12px;
   background: #0d172a;
@@ -168,22 +212,70 @@
   background: rgba(13, 23, 42, 0.7);
 }
 
-.purchase-item {
-  margin-bottom: 10px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  text-align: left;
-}
-
-.purchase-item p {
-  margin: 0;
-  font-size: 0.9rem;
-}
 .scrollable {
   max-height: 300px;
   overflow-y: auto;
-  padding-right: 10px; 
+  padding-right: 10px;
 }
 
+.scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background-color: rgba(68, 85, 165, 0.6); 
+  border-radius: 4px;
+}
+
+.scrollable::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(68, 85, 165, 0.8); 
+}
+.card-input-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px; 
+  width: 100%;
+  max-width: 380px; 
+  margin: 20px auto;
+}
+
+.card-input-container {
+  width: 80%;
+  max-width: 300px;
+  margin: 10px auto;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+  color: #0d172a;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-input-container .StripeElement::placeholder {
+  color: rgba(13, 23, 42, 0.7);
+}
+
+.card-input-container:focus-within {
+  outline: none;
+  border: 1px solid #0d172a;
+  box-shadow: 0 0 8px rgba(13, 23, 42, 0.5);
+}
+
+
+
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.success-message {
+  color: green;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 5px;
+}

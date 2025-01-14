@@ -19,7 +19,7 @@ const services = [
   {
     id: 2,
     name: "Film Playlist",
-    description: "Create a custom playlist. Includes 3 credits. Subscription available for 2.99$/month.",
+    description: "Create a custom playlist. Includes unlimited credits. Subscription available for 2.99$/month.",
     price: 2.99,
     image: mymediaImg,
   },
