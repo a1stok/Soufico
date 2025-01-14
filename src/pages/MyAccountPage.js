@@ -220,6 +220,7 @@ const MyAccountPage = () => {
           </h3>
           <p>${(item.price * item.quantity).toFixed(2)}</p>
           <p>Transaction ID: {item.transactionId || "N/A"}</p>
+          <p>Purchase Date: {new Date(item.purchaseDate).toLocaleDateString()}</p>
         </div>
       </div>
     ))
