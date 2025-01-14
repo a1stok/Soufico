@@ -9,7 +9,8 @@ import ShopPage from "./pages/ShopPage";
 import SubscriptionsPage from "./pages/SubscriptionsPage";
 import SpotifyCallback from "./pages/SpotifyCallback";
 import MyAccountPage from "./pages/MyAccountPage";
-import CheckoutForm from "./components/CheckoutForm"; 
+import MovieDetailsPage from "./pages/MovieDetailsPage"; // New movie details page
+import CheckoutForm from "./components/CheckoutForm";
 
 function App() {
   return (
@@ -24,7 +25,8 @@ function App() {
         <Route path="/my-account" element={<MyAccountPage />} />
         <Route path="/subscriptions" element={<SubscriptionsPage />} />
         <Route path="/callback" element={<SpotifyCallback />} />
-        <Route path="/checkout" element={<CheckoutForm />} /> {/*checkout letsgooo*/}
+        <Route path="/movie/:id" element={<MovieDetailsPage />} />
+        <Route path="/checkout" element={<CheckoutForm />} />
       </Routes>
     </Router>
   );

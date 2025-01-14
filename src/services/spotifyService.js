@@ -10,11 +10,12 @@ export const getSpotifyAuthUrl = () => {
   )}&scope=${encodeURIComponent(scopes)}`;
 };
 
-export const createPlaylist = async (accessToken, userId, name) => {
+export const createPlaylist = async (accessToken, userId, movieTitle) => {
   try {
+    const playlistName = `${movieTitle} Playlist`;
     const response = await axios.post(
       `https://api.spotify.com/v1/users/${userId}/playlists`,
-      { name, public: false, description: `Generated playlist: ${name}` },
+      { name: playlistName, public: false, description: `Playlist for the movie: ${movieTitle}` },
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -29,35 +30,10 @@ export const createPlaylist = async (accessToken, userId, name) => {
   }
 };
 
-export const searchTracksByGenre = async (accessToken, genres) => {
+export const linkExistingPlaylist = async (playlistId, userId, accessToken) => {
   try {
-    const tracks = [];
-    for (const genre of genres) {
-      const response = await axios.get(
-        `https://api.spotify.com/v1/search?q=genre:"${encodeURIComponent(
-          genre
-        )}"&type=track&limit=5`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      const trackUris = response.data.tracks.items.map((track) => track.uri);
-      tracks.push(...trackUris);
-    }
-    return tracks.slice(0, 20);
-  } catch (error) {
-    console.error("Error searching tracks by genre:", error.response?.data || error.message);
-    return [];
-  }
-};
-
-export const addTracksToPlaylist = async (accessToken, playlistId, trackUris) => {
-  try {
-    await axios.post(
-      `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
-      { uris: trackUris },
+    const response = await axios.get(
+      `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -65,8 +41,10 @@ export const addTracksToPlaylist = async (accessToken, playlistId, trackUris) =>
         },
       }
     );
+    return response.data;
   } catch (error) {
-    console.error("Error adding tracks to playlist:", error.response?.data || error.message);
+    console.error("Error linking to existing playlist:", error.response?.data || error.message);
+    return null;
   }
 };
 

@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  getSpotifyAuthUrl,
-  createPlaylist,
-  searchTracksByGenre,
-  addTracksToPlaylist,
-  setPlaylistCoverImage,
-} from "../services/spotifyService";
-import { searchMovies, fetchGenresFromTMDb } from "../services/tmdbService";
+import { useNavigate } from "react-router-dom";
+import { getSpotifyAuthUrl } from "../services/spotifyService"; // Removed unused imports
+import { searchMovies } from "../services/tmdbService";
 import "./SubscriptionsPage.css";
 
 import searchIcon from "../images/loop-icon.png";
@@ -17,19 +12,11 @@ const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w200";
 const SubscriptionsPage = () => {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
-  const [playlistLink, setPlaylistLink] = useState("");
   const [error, setError] = useState("");
   const [userProfile, setUserProfile] = useState(null);
   const [accessToken, setAccessToken] = useState(localStorage.getItem("spotify_access_token") || "");
-  const [tmdbGenres, setTmdbGenres] = useState({});
 
-  useEffect(() => {
-    const loadGenres = async () => {
-      const genres = await fetchGenresFromTMDb();
-      setTmdbGenres(genres);
-    };
-    loadGenres();
-  }, []);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const hash = window.location.hash.substring(1);
@@ -114,47 +101,10 @@ const SubscriptionsPage = () => {
     }
   };
 
-  const handleCreatePlaylist = async (movie) => {
-    try {
-      if (!accessToken) {
-        alert("Please log in to Spotify first.");
-        return;
-      }
-
-      const playlist = await createPlaylist(
-        accessToken,
-        userProfile?.id,
-        `Soundtrack for ${movie.title}`
-      );
-
-      if (!playlist) {
-        alert("Failed to create playlist. Please try again.");
-        return;
-      }
-
-      const genres = movie.genre_ids.map((id) => tmdbGenres[id]).filter(Boolean);
-
-      if (genres.length === 0) {
-        alert("No genres available for this movie to generate a playlist.");
-        return;
-      }
-
-      const trackUris = await searchTracksByGenre(accessToken, genres);
-
-      if (trackUris.length > 0) {
-        await addTracksToPlaylist(accessToken, playlist.id, trackUris);
-      }
-
-      const moviePosterUrl = `${TMDB_IMAGE_BASE_URL}${movie.poster_path}`;
-      await setPlaylistCoverImage(accessToken, playlist.id, moviePosterUrl);
-
-      alert("Playlist created successfully!");
-      setPlaylistLink(playlist.external_urls.spotify);
-    } catch (err) {
-      console.error("Error creating playlist:", err);
-      alert("An error occurred while creating the playlist.");
-    }
+  const handleMovieSelection = (movie) => {
+    navigate(`/movie/${movie.id}`, { state: { movie } });
   };
+  
 
   return (
     <div className="subscriptions-page">
@@ -202,19 +152,11 @@ const SubscriptionsPage = () => {
               <p>Release Date: {new Date(movie.release_date).toLocaleDateString()}</p>
               <p>Rating: {movie.vote_average.toFixed(1)}/10</p>
               <p className="movie-description">{movie.overview}</p>
-              <button onClick={() => handleCreatePlaylist(movie)}>Create Playlist</button>
+              <button onClick={() => handleMovieSelection(movie)}>Choose Movie</button>
             </div>
           </div>
         ))}
       </div>
-
-      {playlistLink && (
-        <div className="playlist-result">
-          <a href={playlistLink} target="_blank" rel="noopener noreferrer">
-            Open Your Playlist on Spotify
-          </a>
-        </div>
-      )}
     </div>
   );
 };
