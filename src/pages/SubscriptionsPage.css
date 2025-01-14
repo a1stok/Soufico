@@ -102,12 +102,14 @@ input:focus {
 }
 
 .logout-button {
+  background: rgba(255, 255, 255, 0.3);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   outline: none;
+  color:#fff;
 }
 
 .logout-button:hover {
-  background-color: #912a2a;
+  background-color: #682525;
   color:rgba(255, 255, 255, 0.3);}
 
 .button-icon {

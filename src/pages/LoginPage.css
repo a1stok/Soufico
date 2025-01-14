@@ -59,38 +59,49 @@ form input:focus {
 }
 
 .link-button {
-  background: none;
-  border: none;
-  color: #0d172a; 
-  text-decoration: underline;
-  cursor: pointer;
-  padding: 0;
+  width: 100%; 
+  text-align: center;
+  margin-top: 10px; 
+  padding: 12px; 
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  color: #0d172a;
+  border-radius: 4px;
+  padding: 8px 12px;
   font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .link-button:hover {
-  color: rgba(13, 23, 42, 0.7); 
+  background: rgba(13, 23, 42, 0.1);
+  color: #0d172a;
 }
 
 form button {
   padding: 12px;
-  background: #0d172a; 
+  background: #0d172a;
   border: none;
   border-radius: 8px;
   color: #fff;
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  text-align: center;
 }
 
 form button:hover {
-  background: rgba(13, 23, 42, 0.7); 
+  background: rgba(13, 23, 42, 0.7);
   transform: scale(1.05);
 }
 
 form button:active {
   transform: scale(1);
 }
+
+
+
 
 .success-message {
   color: #0d172a; 
