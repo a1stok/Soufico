@@ -119,10 +119,10 @@ const MyAccountPage = () => {
         setPaymentError(error.message);
       } else if (paymentIntent.status === "succeeded") {
         setPaymentSuccess(true);
-
+        const transactionId = paymentIntent.id;
         const purchaseResponse = await fetch("https://soufico.onrender.com/api/users/complete-purchase", {
           method: "POST",
-          body: JSON.stringify({ uid, basket }),
+          body: JSON.stringify({ uid, basket,transactionId}),
           headers: {
             "Content-Type": "application/json",
           },
@@ -188,6 +188,7 @@ const MyAccountPage = () => {
                   {item.name} {item.quantity > 1 && `x${item.quantity}`}
                 </h3>
                 <p>${(item.price * item.quantity).toFixed(2)}</p>
+                <p>Transaction ID: {item.transactionId || "N/A"}</p>
               </div>
             </div>
           ))
@@ -205,7 +206,7 @@ const MyAccountPage = () => {
         </div>
       </div>
 
-      <div className="glass-container purchases-summary">
+      <div className="glass-container purchases-summary scrollable">
         <h2>Your Purchases</h2>
         {purchases.length > 0 ? (
           purchases.map((item) => (
