@@ -1,8 +1,8 @@
 body {
   margin: 0; 
   padding: 0; 
-  background: linear-gradient(135deg, #fdfdfd, #cfcfdf); /* Gradient background */
-  font-family: 'Jura', serif; /* Global font */
+  background: linear-gradient(135deg, #fdfdfd, #cfcfdf); 
+  font-family: 'Jura', serif; 
   min-height: 100vh;
 }
 

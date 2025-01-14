@@ -163,6 +163,7 @@ const SubscriptionsPage = () => {
       <div className="search-section">
         <input
           type="text"
+          className="styled-input"
           placeholder="Enter a movie name"
           value={query}
           onChange={(e) => setQuery(e.target.value)}

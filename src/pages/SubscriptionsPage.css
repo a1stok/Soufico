@@ -1,3 +1,29 @@
+h1{
+  font-family: 'Jura', serif; 
+
+}
+input {
+  padding: 14px;
+  display: block;
+  margin: 10px auto;
+  width: 80%;
+  max-width: 300px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.3);
+  color: #0d172a;
+  font-size: 1rem;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+input::placeholder {
+  color: rgba(13, 23, 42, 0.7);
+}
+
+input:focus {
+  outline: none;
+  border: 1px solid #4455a5;
+  box-shadow: 0 0 8px rgba(68, 85, 165, 0.4);
+}
 .subscriptions-page {
   text-align: center;
   padding: 20px;
@@ -12,17 +38,22 @@
 }
 
 .search-section input {
-  padding: 12px;
+  background: rgba(255, 255, 255, 0.3);
+  font-family: 'Jura', serif; 
+  padding: 12px 14px;
+  border: none;
   width: 400px;
+  font-size: 1rem;
   font-size: 1.1rem;
-  border: 2px solid #ccc;
-  border-radius: 8px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
 }
 
 .search-section input:focus {
-  border-color: #007bff;
-  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+  font-size: 1.1rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   outline: none;
 }
 
@@ -35,17 +66,20 @@
 .search-button,
 .spotify-button,
 .logout-button {
-  background-color: #fff;
-  border: 2px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.3);
+  font-family: 'Jura', serif; 
+  padding: 12px 14px;
   border-radius: 1.5rem;
   width: auto;
+  border: none;
+  font-size: 1rem;
   height: 40px;
   padding: 8px 14px;
   font-size: 0.9rem;
-  font-weight: 600;
   color: #0d172a;
   cursor: pointer;
   transition: all 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -53,8 +87,10 @@
 }
 
 .search-button:hover {
-  background-color: #1e293b;
-  color: #fff;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  outline: none;
 }
 
 .search-button:hover .button-icon {
@@ -62,14 +98,17 @@
 }
 
 .spotify-button:hover {
-  background-color: #1e293b;
-  color: #fff;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  outline: none;;
 }
 
 .logout-button {
-  background-color: #fff;
-  border: 2px solid #e2e8f0;
-  color: #0d172a;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  outline: none;
 }
 
 .logout-button:hover {
