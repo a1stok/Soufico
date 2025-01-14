@@ -1,6 +1,7 @@
 .shop-page {
   padding: 20px;
   text-align: center;
+  background: linear-gradient(135deg, #fdfdfd, #cfcfdf);
 }
 
 .shop-page h1 {
@@ -21,9 +22,8 @@
   width: 90%;
   max-width: 550px;
   padding: 25px;
-  border: 1px solid #ddd;
   border-radius: 15px;
-  background-color: #f9f9f9;
+  background: rgba(255, 255, 255, 0.3);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   text-align: left;
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
@@ -41,7 +41,6 @@
   object-fit: cover;
   border-radius: 10px;
   opacity: 1;
-  -webkit-transition: opacity 0.3s ease-in-out;
   transition: opacity 0.3s ease-in-out;
 }
 
@@ -73,48 +72,52 @@
 
 @media (max-width: 768px) {
   .service-list {
-      flex-direction: column;
-      gap: 20px;
+    flex-direction: column;
+    gap: 20px;
   }
 
   .service-block {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 20px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
   }
 
   .hover11 figure img {
-      margin-right: 0;
-      margin-bottom: 15px;
+    margin-right: 0;
+    margin-bottom: 15px;
   }
 
   .service-title {
-      font-size: 1.4rem;
+    font-size: 1.4rem;
   }
 
   .service-description {
-      font-size: 0.9rem;
+    font-size: 0.9rem;
   }
 
   .service-price {
-      font-size: 1.1rem;
+    font-size: 1.1rem;
   }
 }
 
 .add-to-basket-button {
-  margin-top: 10px;
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: white;
+  background: rgba(255, 255, 255, 0.3);
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0d172a;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .add-to-basket-button:hover {
-  background-color: #0056b3;
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .basket-summary {
@@ -165,13 +168,16 @@
 }
 
 .custom-price-input {
-  margin: 10px 0;
+  margin-left: 0;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-top: 14.5em;
   padding: 10px;
   width: 180px;
   font-size: 1rem;
   border: 1px solid #ddd;
   border-radius: 5px;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 3px rgba(112, 96, 94, 0.77);
   transition: border-color 0.3s ease-in-out;
 }
 
@@ -181,111 +187,56 @@
 }
 
 .button-81 {
-  background-color: #fff;
-  border: 0 solid #e2e8f0;
-  border-radius: 1.5rem;
-  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-weight: 600;
   color: #0d172a;
   cursor: pointer;
-  display: inline-block;
-  font-family: "Basier circle", -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 1.1rem;
-  font-weight: 600;
-  line-height: 1;
-  padding: 1rem 1.6rem;
-  text-align: center;
-  text-decoration: none;
-  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0px 1px 2px rgba(166, 175, 195, 0.25);
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .button-81:hover {
-  background-color: #1e293b;
-  color: #fff;
-}
-
-.button-sponsor {
-  background-color: #fff;
-  color: #0d172a;
+  background: #202830d3;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  color: #e7e7e7;
 }
 
 .button-sponsor:hover {
-  background-color: #d9d9d9;
-  color: #000;
-}
-
-.button-playlist {
-  background-color: #fff;
-  color: #0d172a;
+  background: #70605ec4;
+  color: #e7e7e7;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .button-playlist:hover {
-  background-color: #d64545;
-  color: #fff;
-}
-
-@media (min-width: 768px) {
-  .button-81 {
-      font-size: 1.125rem;
-      padding: 1rem 2rem;
-  }
-}
-
-.button-55 {
-  align-self: center;
-  background-color: #fff;
-  background-image: none;
-  background-position: 0 90%;
-  background-repeat: repeat no-repeat;
-  background-size: 4px 3px;
-  border-radius: 15px 225px 255px 15px 15px 255px 225px 15px;
-  border-style: solid;
-  border-width: 2px;
-  box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
-  box-sizing: border-box;
-  color: #41403e;
-  cursor: pointer;
-  display: inline-block;
-  font-family: Neucha, sans-serif;
-  font-size: 1rem;
-  line-height: 23px;
-  outline: none;
-  padding: .75rem;
-  text-decoration: none;
-  transition: all 235ms ease-in-out;
-  border-bottom-left-radius: 15px 255px;
-  border-bottom-right-radius: 225px 15px;
-  border-top-left-radius: 255px 15px;
-  border-top-right-radius: 15px 225px;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
-
-.button-55:hover {
-  box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
-  transform: translate3d(0, 2px, 0);
-}
-
-.button-55:focus {
-  box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
+  background: rgba(219, 68, 68, 0.822);
+  color: #e7e7e7;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(255, 71, 71, 0.15);
 }
 
 .order-button {
-  width: 120px;
-  height: 40px;
-  font-size: 0.9rem;
-  padding: 0;
-  margin-top: 10px;
-  margin-left: 0;
+  background: #202830;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0d172a;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .order-button:hover {
-  background-color: #218838;
-  color: white;
+  background: rgba(7, 160, 45, 0.842);
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .basket-remove {
