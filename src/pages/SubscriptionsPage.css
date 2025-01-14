@@ -87,8 +87,6 @@ input:focus {
 }
 
 .search-button:hover {
-  font-size: 1.1rem;
-  border-radius: 8px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   outline: none;
 }
@@ -98,23 +96,19 @@ input:focus {
 }
 
 .spotify-button:hover {
-  font-size: 1.1rem;
-  border-radius: 8px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  outline: none;;
+  outline: none;
+ 
 }
 
 .logout-button {
-  font-size: 1.1rem;
-  border-radius: 8px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   outline: none;
 }
 
 .logout-button:hover {
   background-color: #912a2a;
-  color: #fff;
-}
+  color:rgba(255, 255, 255, 0.3);}
 
 .button-icon {
   width: 16px;
@@ -144,9 +138,9 @@ input:focus {
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  border: 1px solid #ddd;
+  border: 1px solid #b9b9b9;
   border-radius: 15px;
-  background-color: #f9f9f9;
+  background: rgba(255, 255, 255, 0.3);
   width: 260px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
@@ -155,6 +149,7 @@ input:focus {
 }
 
 .movie-card:hover {
+  background: rgba(255, 255, 255, 0.479);
   transform: translateY(-5px);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
 }
@@ -209,28 +204,37 @@ input:focus {
 }
 
 button {
-  background-color: #fff;
-  border: 2px solid #e2e8f0;
+  font-family: 'Jura', serif; 
+  background: rgba(255, 255, 255, 0.3);
+  padding: 12px 14px;
   border-radius: 1.5rem;
-  padding: 10px 14px;
+  font-weight: 500;
+  width: auto;
+  border: none;
   font-size: 1rem;
-  font-weight: 600;
+  height: 40px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
   color: #0d172a;
   cursor: pointer;
   transition: all 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; 
   box-shadow: 0px 1px 2px rgba(166, 175, 195, 0.25);
   margin-top: 10px;
 }
 
 button:hover {
+  font-weight: 500;
   background-color: #1e293b;
   color: #fff;
 }
 
 .button-group {
+  font-weight: 500;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   gap: 10px;
+  
 }
