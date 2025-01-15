@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSpotifyAuthUrl } from "../services/spotifyService";
+import { getSpotifyAuthUrl, ensureValidAccessToken, fetchUserPlaylists } from "../services/spotifyService";
 import { searchMovies } from "../services/tmdbService";
 import "./SubscriptionsPage.css";
 
@@ -14,59 +14,48 @@ const SubscriptionsPage = () => {
   const [movies, setMovies] = useState([]);
   const [error, setError] = useState("");
   const [userProfile, setUserProfile] = useState(null);
-  const [accessToken, setAccessToken] = useState(localStorage.getItem("spotify_access_token") || "");
-
+  const [playlists, setPlaylists] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const hash = window.location.hash.substring(1);
-    const params = new URLSearchParams(hash);
-    const token = params.get("access_token");
+    const fetchUserProfileAndPlaylists = async () => {
+      const accessToken = await ensureValidAccessToken();
+      if (!accessToken) return;
 
-    if (token) {
-      setAccessToken(token);
-      localStorage.setItem("spotify_access_token", token);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, []);
-
-  useEffect(() => {
-    const fetchUserProfile = async (token) => {
       try {
-        const response = await fetch("https://api.spotify.com/v1/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        // Fetch User Profile
+        const profileResponse = await fetch("https://api.spotify.com/v1/me", {
+          headers: { Authorization: `Bearer ${accessToken}` },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          setUserProfile(data);
+        if (profileResponse.ok) {
+          const profileData = await profileResponse.json();
+          setUserProfile(profileData);
+
+          // Fetch User Playlists
+          const playlistsData = await fetchUserPlaylists();
+          setPlaylists(playlistsData?.items || []);
         } else {
-          console.error("Failed to fetch user profile:", response.statusText);
+          console.error("Failed to fetch user profile:", profileResponse.statusText);
+          setError("Failed to load profile. Please try logging in again.");
         }
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
+      } catch (err) {
+        console.error("Error fetching user profile or playlists:", err);
+        setError("An error occurred. Please try logging in again.");
       }
     };
 
-    if (accessToken) {
-      fetchUserProfile(accessToken);
-    }
-  }, [accessToken]);
+    fetchUserProfileAndPlaylists();
+  }, []);
 
   const handleSpotifyLogin = () => {
-    if (!accessToken) {
-      window.location.href = getSpotifyAuthUrl();
-    } else {
-      alert("You are already logged in to Spotify.");
-    }
+    window.location.href = getSpotifyAuthUrl();
   };
 
   const handleSpotifyLogout = () => {
     localStorage.removeItem("spotify_access_token");
-    setAccessToken(null);
     setUserProfile(null);
+    setPlaylists([]);
     alert("Logged out of Spotify.");
   };
 
@@ -156,6 +145,29 @@ const SubscriptionsPage = () => {
           </div>
         ))}
       </div>
+
+      {userProfile && (
+        <div className="playlists-section">
+          <h2>Your Spotify Playlists</h2>
+          {playlists.length > 0 ? (
+            <ul className="playlist-list">
+              {playlists.map((playlist) => (
+                <li key={playlist.id} className="playlist-item">
+                  <a
+                    href={playlist.external_urls.spotify}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {playlist.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>You don't have any playlists yet.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 };

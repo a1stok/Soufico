@@ -5,26 +5,20 @@ const SpotifyCallback = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const hash = window.location.hash.substring(1); 
+    const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
     const accessToken = params.get("access_token");
-  
+
     if (accessToken) {
-      console.log("Spotify access token retrieved:", accessToken); 
-      localStorage.setItem("spotify_access_token", accessToken); 
-      navigate("/subscriptions"); 
-      console.error("No access token found.");
-      alert("Spotify login failed. Please try again.");
-      navigate("/subscriptions"); 
+      localStorage.setItem("spotify_access_token", accessToken);
+      navigate("/subscriptions");
+    } else {
+      console.error("Spotify login failed. Redirecting to login.");
+      navigate("/login");
     }
   }, [navigate]);
-  
 
-  return (
-    <div>
-      <p>Processing Spotify Login...</p>
-    </div>
-  );
+  return <p>Processing Spotify Login...</p>;
 };
 
 export default SpotifyCallback;
