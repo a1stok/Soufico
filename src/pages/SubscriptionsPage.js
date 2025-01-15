@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSpotifyAuthUrl } from "../services/spotifyService"; // Removed unused imports
+import { getSpotifyAuthUrl } from "../services/spotifyService";
 import { searchMovies } from "../services/tmdbService";
 import "./SubscriptionsPage.css";
 
@@ -104,7 +104,6 @@ const SubscriptionsPage = () => {
   const handleMovieSelection = (movie) => {
     navigate(`/movie/${movie.id}`, { state: { movie } });
   };
-  
 
   return (
     <div className="subscriptions-page">

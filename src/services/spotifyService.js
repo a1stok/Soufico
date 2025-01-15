@@ -8,12 +8,11 @@ export const getSpotifyAuthUrl = () => {
   )}&scope=${encodeURIComponent(scopes)}`;
 };
 
-export const createPlaylist = async (accessToken, userId, movieTitle) => {
+export const createPlaylist = async (accessToken, userId, playlistName) => {
   try {
-    const playlistName = `${movieTitle} Playlist`;
     const response = await axios.post(
       `https://api.spotify.com/v1/users/${userId}/playlists`,
-      { name: playlistName, public: false, description: `Playlist for the movie: ${movieTitle}` },
+      { name: playlistName, public: false, description: `Generated Playlist: ${playlistName}` },
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -28,19 +27,32 @@ export const createPlaylist = async (accessToken, userId, movieTitle) => {
   }
 };
 
-export const linkExistingPlaylist = async (playlistId, userId, accessToken) => {
+export const getSpotifyPlaylistUrl = (playlistId) => {
+  if (!playlistId) return null;
+  return `https://open.spotify.com/playlist/${playlistId}`;
+};
+
+export const linkExistingPlaylist = (playlistUrl) => {
+  if (!playlistUrl) return null;
   try {
-    const response = await axios.get(
-      `https://api.spotify.com/v1/playlists/${playlistId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    const playlistId = new URL(playlistUrl).pathname.split("/").pop();
+    return playlistId;
+  } catch (error) {
+    console.error("Invalid playlist URL:", error.message);
+    return null;
+  }
+};
+
+export const fetchPlaylistDetails = async (accessToken, playlistId) => {
+  try {
+    const response = await axios.get(`https://api.spotify.com/v1/playlists/${playlistId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
     return response.data;
   } catch (error) {
-    console.error("Error linking to existing playlist:", error.response?.data || error.message);
+    console.error("Error fetching playlist details:", error.response?.data || error.message);
     return null;
   }
 };
