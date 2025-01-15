@@ -1,34 +1,39 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+import { createPlaylist } from "../services/spotifyService"; // Import the function
 import "./MovieDetailsPage.css";
 
 function MovieDetailsPage() {
-  const { id } = useParams();
   const location = useLocation();
-  const [movie, setMovie] = useState(location.state?.movie || null);
+  const movie = location.state?.movie || null;
+
   const [playlistLink, setPlaylistLink] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (!movie) {
-      const fetchMovie = async () => {
-        try {
-          const response = await fetch(`/api/movies/${id}`);
-          if (!response.ok) throw new Error("Failed to fetch movie details.");
-          const data = await response.json();
-          setMovie(data);
-        } catch (error) {
-          console.error("Error fetching movie:", error);
-        }
-      };
-      fetchMovie();
-    }
-  }, [id, movie]);
+  const accessToken = localStorage.getItem("spotify_access_token");
+  const userProfile = JSON.parse(localStorage.getItem("spotify_user_profile"));
 
   const handleCreatePlaylist = async () => {
+    if (!accessToken) {
+      alert("Please log in to Spotify first.");
+      return;
+    }
+
     setIsLoading(true);
     try {
-      alert("Create Playlist button clicked. Implement the logic.");
+      const playlist = await createPlaylist(
+        accessToken,
+        userProfile?.id,
+        `${movie.title} Playlist`
+      );
+
+      if (!playlist) {
+        alert("Failed to create playlist. Please try again.");
+        return;
+      }
+
+      alert("Playlist created successfully!");
+      setPlaylistLink(playlist.external_urls.spotify);
     } catch (error) {
       console.error("Error creating playlist:", error);
       alert("Failed to create the playlist. Please try again.");
@@ -60,8 +65,13 @@ function MovieDetailsPage() {
           />
           <div className="movie-info">
             <h2>{movie.title}</h2>
-            <p><strong>Release Date:</strong> {new Date(movie.release_date).toLocaleDateString()}</p>
-            <p><strong>Rating:</strong> {movie.vote_average.toFixed(1)}/10</p>
+            <p>
+              <strong>Release Date:</strong>{" "}
+              {new Date(movie.release_date).toLocaleDateString()}
+            </p>
+            <p>
+              <strong>Rating:</strong> {movie.vote_average.toFixed(1)}/10
+            </p>
             <p>{movie.overview}</p>
           </div>
         </div>
@@ -87,7 +97,10 @@ function MovieDetailsPage() {
               >
                 {isLoading ? "Creating Playlist..." : "Create Playlist"}
               </button>
-              <button className="action-button link-button" onClick={handleLinkPlaylist}>
+              <button
+                className="action-button link-button"
+                onClick={handleLinkPlaylist}
+              >
                 Link Existing Playlist
               </button>
             </div>
