@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { createPlaylist } from "../services/spotifyService"; // Import the function
+import { createPlaylist } from "../services/spotifyService";
 import "./MovieDetailsPage.css";
 
 function MovieDetailsPage() {
@@ -10,8 +10,12 @@ function MovieDetailsPage() {
   const [playlistLink, setPlaylistLink] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const accessToken = localStorage.getItem("spotify_access_token");
-  const userProfile = JSON.parse(localStorage.getItem("spotify_user_profile"));
+  const accessToken =
+    typeof window !== "undefined" ? localStorage.getItem("spotify_access_token") : null;
+  const userProfile =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("spotify_user_profile"))
+      : null;
 
   const handleCreatePlaylist = async () => {
     if (!accessToken) {
@@ -80,7 +84,7 @@ function MovieDetailsPage() {
             <div className="playlist-container">
               <h3>Spotify Playlist</h3>
               <iframe
-                src={`https://open.spotify.com/embed/playlist/${playlistLink}`}
+                src={playlistLink}
                 width="100%"
                 height="380"
                 frameBorder="0"

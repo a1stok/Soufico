@@ -1,7 +1,5 @@
 import axios from "axios";
-import { SPOTIFY_CLIENT_ID, SPOTIFY_SCOPES } from "../spotifyConfig";
-
-const SPOTIFY_REDIRECT_URI = "https://flowershop-3e9f1.web.app/subscriptions";
+import { SPOTIFY_CLIENT_ID, SPOTIFY_SCOPES, SPOTIFY_REDIRECT_URI } from "../spotifyConfig";
 
 export const getSpotifyAuthUrl = () => {
   const scopes = SPOTIFY_SCOPES.join(" ");
@@ -33,11 +31,10 @@ export const createPlaylist = async (accessToken, userId, movieTitle) => {
 export const linkExistingPlaylist = async (playlistId, userId, accessToken) => {
   try {
     const response = await axios.get(
-      `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}`,
+      `https://api.spotify.com/v1/playlists/${playlistId}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
         },
       }
     );
@@ -45,31 +42,5 @@ export const linkExistingPlaylist = async (playlistId, userId, accessToken) => {
   } catch (error) {
     console.error("Error linking to existing playlist:", error.response?.data || error.message);
     return null;
-  }
-};
-
-export const setPlaylistCoverImage = async (accessToken, playlistId, moviePosterUrl) => {
-  try {
-    const response = await fetch(moviePosterUrl);
-    const blob = await response.blob();
-    const base64Image = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result.split(",")[1]);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-
-    await axios.put(
-      `https://api.spotify.com/v1/playlists/${playlistId}/images`,
-      base64Image,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "image/jpeg",
-        },
-      }
-    );
-  } catch (error) {
-    console.error("Error setting playlist cover image:", error.response?.data || error.message);
   }
 };
