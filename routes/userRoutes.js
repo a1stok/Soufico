@@ -85,13 +85,14 @@ router.post("/save-movie-playlist", async (req, res) => {
       { upsert: true }
     );
 
-    console.log("Save result:", result);
+    console.log("Save result:", result); 
     res.status(200).json({ message: "Movie playlist saved successfully!" });
   } catch (error) {
     console.error("Error saving movie playlist:", error);
     res.status(500).json({ error: "Failed to save movie playlist." });
   }
 });
+
 
 // Fetch Movie Playlists
 router.get("/fetch-movie-playlists/:userId", async (req, res) => {

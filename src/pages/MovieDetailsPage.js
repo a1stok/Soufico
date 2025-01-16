@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { createPlaylist, ensureValidAccessToken } from "../services/spotifyService";
-import { saveMoviePlaylist } from "../services/userService"; // New service
+import { saveMoviePlaylist } from "../services/userService"; 
 import "./MovieDetailsPage.css";
 
 function MovieDetailsPage() {
@@ -63,19 +63,27 @@ function MovieDetailsPage() {
       alert("Create or link a playlist first.");
       return;
     }
-
+  
     try {
+      const userId = userProfile?.id;
+      if (!userId) {
+        alert("User ID is missing. Please log in.");
+        return;
+      }
+  
       await saveMoviePlaylist({
+        userId,
         movie,
         playlistLink,
-        userId: userProfile.id,
       });
+  
       alert("Saved to your movie playlist!");
     } catch (error) {
       console.error("Error saving movie playlist:", error);
       alert("Failed to save the movie playlist.");
     }
   };
+  
 
   const handleLinkPlaylist = () => {
     const userInput = prompt("Paste your Spotify playlist link here:");

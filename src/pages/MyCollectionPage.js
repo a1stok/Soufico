@@ -13,9 +13,11 @@ const MyCollectionPage = () => {
       try {
         setLoading(true);
         setError("");
-        const userId = "spotifyUser123"; // Replace this with dynamic user ID if available
+        const userId = localStorage.getItem("spotify_user_id"); 
+        if (!userId) throw new Error("User ID is missing.");
+
         const data = await fetchUserMoviePlaylists(userId);
-        console.log("Fetched collections:", data); // Debugging log
+        console.log("Fetched collections:", data); 
         setCollections(data);
       } catch (error) {
         console.error("Error fetching collections:", error);

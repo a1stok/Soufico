@@ -27,6 +27,7 @@ export const ensureValidAccessToken = async () => {
 
     if (response.status === 200) {
       const userProfile = response.data;
+      localStorage.setItem("spotify_user_id", userProfile.id); // Save user ID in local storage
       await saveSpotifyUser({
         uid: userProfile.id,
         name: userProfile.display_name,
@@ -64,35 +65,37 @@ export const saveSpotifyUser = async ({ uid, name, photoURL }) => {
   }
 };
 
-export const createPlaylist = async (userId, playlistName) => {
-  const accessToken = await ensureValidAccessToken();
-  if (!accessToken) return null;
+export const saveMoviePlaylist = async ({ userId, movie, playlistLink }) => {
+  const BASE_URL =
+    process.env.NODE_ENV === "production"
+      ? "https://soufico.onrender.com/api/users"
+      : "http://localhost:3000/api/users";
 
   try {
-    const response = await axios.post(
-      `https://api.spotify.com/v1/users/${userId}/playlists`,
-      { name: playlistName, public: false },
-      { headers: { Authorization: `Bearer ${accessToken}` } }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error creating playlist:", error.response?.data || error.message);
-    return null;
-  }
-};
-
-export const fetchUserPlaylists = async () => {
-  const accessToken = await ensureValidAccessToken();
-  if (!accessToken) return null;
-
-  try {
-    const response = await axios.get("https://api.spotify.com/v1/me/playlists", {
-      headers: { Authorization: `Bearer ${accessToken}` },
+    const response = await axios.post(`${BASE_URL}/save-movie-playlist`, {
+      userId,
+      movie,
+      playlistLink,
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching user playlists:", error.response?.data || error.message);
-    return null;
+    console.error("Error saving movie playlist:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const fetchUserMoviePlaylists = async (userId) => {
+  const BASE_URL =
+    process.env.NODE_ENV === "production"
+      ? "https://soufico.onrender.com/api/users"
+      : "http://localhost:3000/api/users";
+
+  try {
+    const response = await axios.get(`${BASE_URL}/fetch-movie-playlists/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching movie playlists:", error.response?.data || error.message);
+    throw error;
   }
 };
 
