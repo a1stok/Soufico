@@ -68,7 +68,6 @@ router.post("/basket", async (req, res) => {
 });
 
 // Save Movie Playlist
-// Save Movie Playlist
 router.post("/save-movie-playlist", async (req, res) => {
   const { userId, movie, playlistLink, userRating, userComment } = req.body;
 
@@ -80,7 +79,6 @@ router.post("/save-movie-playlist", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    // Check if the playlist for the movie already exists
     const existingPlaylist = await usersCollection.findOne({
       uid: userId,
       "moviePlaylists.movie.id": movie.id,
@@ -92,8 +90,7 @@ router.post("/save-movie-playlist", async (req, res) => {
       });
     }
 
-    // Save the new playlist
-    const result = await usersCollection.updateOne(
+    await usersCollection.updateOne(
       { uid: userId },
       {
         $push: {
@@ -109,15 +106,12 @@ router.post("/save-movie-playlist", async (req, res) => {
       { upsert: true }
     );
 
-    console.log("Save result:", result);
     res.status(200).json({ message: "Movie playlist saved successfully!" });
   } catch (error) {
     console.error("Error saving movie playlist:", error);
     res.status(500).json({ error: "Failed to save movie playlist." });
   }
 });
-
-
 
 
 
@@ -195,6 +189,7 @@ router.get("/fetch-comments/:userId/:movieId", async (req, res) => {
     );
 
     if (!user || !user.moviePlaylists || user.moviePlaylists.length === 0) {
+      console.error(`Movie or playlist not found for userId: ${userId}, movieId: ${movieId}`);
       return res.status(404).json({ error: "Movie or playlist not found." });
     }
 
@@ -204,6 +199,7 @@ router.get("/fetch-comments/:userId/:movieId", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch movie and playlist." });
   }
 });
+
 
 
 // Complete Purchase

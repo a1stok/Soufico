@@ -5,13 +5,14 @@ const path = require("path");
 const { connectToDB } = require("./db");
 const userRoutes = require("./routes/userRoutes");
 const { getDB } = require("./db");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); 
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware
 app.use(express.json());
 app.use(
   cors({
@@ -21,10 +22,19 @@ app.use(
   })
 );
 
+// Connect to the database
 connectToDB();
 
+// Debugging middleware for API requests
+app.use((req, res, next) => {
+  console.log(`API hit: ${req.method} ${req.url}`);
+  next();
+});
+
+// Mount routes
 app.use("/api/users", userRoutes);
 
+// Basket-related endpoints
 app.post("/api/users/basket", async (req, res) => {
   const { uid, basket } = req.body;
 
@@ -67,7 +77,10 @@ app.get("/api/users/basket/:uid", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    const user = await usersCollection.findOne({ uid }, { projection: { basket: 1 } });
+    const user = await usersCollection.findOne(
+      { uid },
+      { projection: { basket: 1 } }
+    );
 
     if (!user || !user.basket) {
       return res.status(404).json({ error: "Basket not found for the user." });
@@ -80,6 +93,7 @@ app.get("/api/users/basket/:uid", async (req, res) => {
   }
 });
 
+// Payment intent endpoint
 app.post("/api/payment/create-payment-intent", async (req, res) => {
   const { basket } = req.body;
 
@@ -106,6 +120,7 @@ app.post("/api/payment/create-payment-intent", async (req, res) => {
   }
 });
 
+// Serve static files in production
 if (process.env.NODE_ENV === "production") {
   const buildPath = path.join(__dirname, "build");
   app.use(express.static(buildPath));
@@ -115,15 +130,18 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
+// Error handler
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err.message);
   res.status(500).json({ error: "Internal Server Error" });
 });
 
+// Start the server
 const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
+// Graceful shutdown
 process.on("SIGTERM", () => {
   server.close(() => {
     console.log("Server has been closed.");
