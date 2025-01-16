@@ -79,12 +79,13 @@ router.post("/save-movie-playlist", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    await usersCollection.updateOne(
+    const result = await usersCollection.updateOne(
       { uid: userId },
       { $push: { moviePlaylists: { movie, playlistLink, savedAt: new Date() } } },
       { upsert: true }
     );
 
+    console.log("Save result:", result);
     res.status(200).json({ message: "Movie playlist saved successfully!" });
   } catch (error) {
     console.error("Error saving movie playlist:", error);
@@ -129,7 +130,7 @@ router.post("/rate-movie", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    await usersCollection.updateOne(
+    const result = await usersCollection.updateOne(
       { uid: userId, "moviePlaylists.movie.id": movieId },
       { 
         $set: { 
@@ -139,6 +140,7 @@ router.post("/rate-movie", async (req, res) => {
       }
     );
 
+    console.log("Rating save result:", result);
     res.status(200).json({ message: "Comment and rating saved successfully!" });
   } catch (error) {
     console.error("Error saving comment and rating:", error);
@@ -197,7 +199,7 @@ router.post("/complete-purchase", async (req, res) => {
       purchaseDate: new Date().toISOString(),
     }));
 
-    await usersCollection.updateOne(
+    const result = await usersCollection.updateOne(
       { uid },
       {
         $set: { basket: [] },
@@ -205,6 +207,7 @@ router.post("/complete-purchase", async (req, res) => {
       }
     );
 
+    console.log("Purchase complete result:", result);
     res.status(200).json({ success: true, message: "Purchase completed successfully!", purchases });
   } catch (error) {
     console.error("Error completing purchase:", error);
@@ -254,6 +257,7 @@ router.delete("/:uid", async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
+    console.log("User deleted result:", result);
     return res.status(200).json({ message: "User deleted successfully!" });
   } catch (error) {
     console.error("Error deleting user data:", error);
