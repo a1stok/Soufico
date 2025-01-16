@@ -53,11 +53,16 @@ function MovieDetailsPage() {
     };
 
     fetchUserProfileAndPlaylist();
-  }, [movie.id]);
+  }, [movie?.id]);
 
   const handleCreatePlaylist = async () => {
     if (!userProfile) {
       alert("Please log in to Spotify first.");
+      return;
+    }
+
+    if (playlistLink) {
+      alert("A playlist is already associated with this movie.");
       return;
     }
 
@@ -89,14 +94,25 @@ function MovieDetailsPage() {
       alert("Create or link a playlist first.");
       return;
     }
-
+  
+    if (userRating === "" || userComment === "") {
+      alert("Please add a rating and comment.");
+      return;
+    }
+  
     try {
       const userId = userProfile?.id;
       if (!userId) {
         alert("User ID is missing. Please log in.");
         return;
       }
-
+  
+      const existingPlaylist = await fetchMoviePlaylistDetails(userId, movie.id);
+      if (existingPlaylist) {
+        alert("A playlist for this movie already exists. You cannot save it again.");
+        return;
+      }
+  
       await saveMoviePlaylist({
         userId,
         movie,
@@ -104,7 +120,7 @@ function MovieDetailsPage() {
         userRating,
         userComment,
       });
-
+  
       alert("Saved to your movie playlist!");
       navigate("/my-playlist");
     } catch (error) {
@@ -112,8 +128,15 @@ function MovieDetailsPage() {
       alert("Failed to save the movie playlist.");
     }
   };
+  
+  
 
   const handleLinkPlaylist = () => {
+    if (playlistLink) {
+      alert("A playlist is already associated with this movie.");
+      return;
+    }
+
     const userInput = prompt("Paste your Spotify playlist link here:");
     try {
       const url = new URL(userInput);
@@ -135,8 +158,8 @@ function MovieDetailsPage() {
 
   return (
     <div className="movie-details-page">
-      <div className="movie-details-container">
-        <div className="movie-card">
+      <div className="movie-details-layout">
+        <div className="movie-description">
           <img
             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
             alt={movie.title}
@@ -154,57 +177,60 @@ function MovieDetailsPage() {
             <p>{movie.overview}</p>
           </div>
         </div>
-        <div className="spotify-section">
-          {playlistLink ? (
-            <div className="playlist-container">
-              <h3>Spotify Playlist</h3>
-              <iframe
-                title="Spotify Embed: Recommendation Playlist"
-                src={playlistLink}
-                width="100%"
-                height="360"
-                style={{ borderRadius: "8px" }}
-                frameBorder="0"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-              ></iframe>
-              <div className="rating-section">
-                <textarea
-                  placeholder="Write your comment here..."
-                  value={userComment}
-                  onChange={(e) => setUserComment(e.target.value)}
-                ></textarea>
-                <input
-                  type="number"
-                  min="0"
-                  max="10"
-                  step="0.1"
-                  placeholder="Rating (0-10)"
-                  value={userRating}
-                  onChange={(e) => setUserRating(parseFloat(e.target.value))}
-                />
+        <div className="movie-actions">
+          <div className="rating-comment">
+            <h3>Leave a Comment and Rating</h3>
+            <textarea
+              placeholder="Write your comment here..."
+              value={userComment}
+              onChange={(e) => setUserComment(e.target.value)}
+            ></textarea>
+            <input
+              type="number"
+              min="0"
+              max="10"
+              step="0.1"
+              placeholder="Rating (0-10)"
+              value={userRating}
+              onChange={(e) => setUserRating(parseFloat(e.target.value))}
+            />
+          </div>
+          <div className="playlist-section">
+            {playlistLink ? (
+              <>
+                <h3>Spotify Playlist</h3>
+                <iframe
+                  title="Spotify Embed: Recommendation Playlist"
+                  src={playlistLink}
+                  width="100%"
+                  height="360"
+                  style={{ borderRadius: "8px" }}
+                  frameBorder="0"
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  loading="lazy"
+                ></iframe>
+              </>
+            ) : (
+              <div className="playlist-actions">
+                <button
+                  className="action-button create-button"
+                  onClick={handleCreatePlaylist}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Creating Playlist..." : "Create Playlist"}
+                </button>
+                <button
+                  className="action-button link-button"
+                  onClick={handleLinkPlaylist}
+                >
+                  Link Existing Playlist
+                </button>
               </div>
-              <button className="save-button" onClick={handleSaveToPlaylist}>
-                Save to Your Movie Playlist
-              </button>
-            </div>
-          ) : (
-            <div className="playlist-actions">
-              <button
-                className="action-button create-button"
-                onClick={handleCreatePlaylist}
-                disabled={isLoading}
-              >
-                {isLoading ? "Creating Playlist..." : "Create Playlist"}
-              </button>
-              <button
-                className="action-button link-button"
-                onClick={handleLinkPlaylist}
-              >
-                Link Existing Playlist
-              </button>
-            </div>
-          )}
+            )}
+          </div>
+          <button className="save-button" onClick={handleSaveToPlaylist}>
+            Save to Your Movie Playlist
+          </button>
         </div>
       </div>
     </div>

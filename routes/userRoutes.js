@@ -68,6 +68,7 @@ router.post("/basket", async (req, res) => {
 });
 
 // Save Movie Playlist
+// Save Movie Playlist
 router.post("/save-movie-playlist", async (req, res) => {
   const { userId, movie, playlistLink, userRating, userComment } = req.body;
 
@@ -79,17 +80,30 @@ router.post("/save-movie-playlist", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
+    // Check if the playlist for the movie already exists
+    const existingPlaylist = await usersCollection.findOne({
+      uid: userId,
+      "moviePlaylists.movie.id": movie.id,
+    });
+
+    if (existingPlaylist) {
+      return res.status(400).json({
+        error: "A playlist for this movie already exists.",
+      });
+    }
+
+    // Save the new playlist
     const result = await usersCollection.updateOne(
-      { uid: userId, "moviePlaylists.movie.id": movie.id },
+      { uid: userId },
       {
-        $set: {
-          "moviePlaylists.$.playlistLink": playlistLink,
-          "moviePlaylists.$.userRating": userRating,
-          "moviePlaylists.$.userComment": userComment,
-        },
-        $setOnInsert: {
-          "moviePlaylists.$.movie": movie,
-          "moviePlaylists.$.savedAt": new Date(),
+        $push: {
+          moviePlaylists: {
+            movie,
+            playlistLink,
+            userRating,
+            userComment,
+            savedAt: new Date(),
+          },
         },
       },
       { upsert: true }
@@ -102,6 +116,7 @@ router.post("/save-movie-playlist", async (req, res) => {
     res.status(500).json({ error: "Failed to save movie playlist." });
   }
 });
+
 
 
 
