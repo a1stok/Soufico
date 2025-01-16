@@ -79,28 +79,17 @@ router.post("/save-movie-playlist", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    const existingPlaylist = await usersCollection.findOne({
-      uid: userId,
-      "moviePlaylists.movie.id": movie.id,
-    });
-
-    if (existingPlaylist) {
-      return res.status(400).json({
-        error: "A playlist for this movie already exists.",
-      });
-    }
-
     await usersCollection.updateOne(
-      { uid: userId },
+      { uid: userId, "moviePlaylists.movie.id": movie.id },
       {
-        $push: {
-          moviePlaylists: {
-            movie,
-            playlistLink,
-            userRating,
-            userComment,
-            savedAt: new Date(),
-          },
+        $set: {
+          "moviePlaylists.$.playlistLink": playlistLink,
+          "moviePlaylists.$.userRating": userRating || null,
+          "moviePlaylists.$.userComment": userComment || null,
+        },
+        $setOnInsert: {
+          "moviePlaylists.$.movie": movie,
+          "moviePlaylists.$.savedAt": new Date(),
         },
       },
       { upsert: true }
@@ -112,6 +101,7 @@ router.post("/save-movie-playlist", async (req, res) => {
     res.status(500).json({ error: "Failed to save movie playlist." });
   }
 });
+
 
 
 
