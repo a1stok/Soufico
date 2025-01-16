@@ -27,7 +27,7 @@ export const ensureValidAccessToken = async () => {
 
     if (response.status === 200) {
       const userProfile = response.data;
-      localStorage.setItem("spotify_user_id", userProfile.id); // Save user ID in local storage
+      localStorage.setItem("spotify_user_id", userProfile.id); 
       await saveSpotifyUser({
         uid: userProfile.id,
         name: userProfile.display_name,
@@ -65,37 +65,35 @@ export const saveSpotifyUser = async ({ uid, name, photoURL }) => {
   }
 };
 
-export const saveMoviePlaylist = async ({ userId, movie, playlistLink }) => {
-  const BASE_URL =
-    process.env.NODE_ENV === "production"
-      ? "https://soufico.onrender.com/api/users"
-      : "http://localhost:3000/api/users";
+export const createPlaylist = async (userId, playlistName) => {
+  const accessToken = await ensureValidAccessToken();
+  if (!accessToken) return null;
 
   try {
-    const response = await axios.post(`${BASE_URL}/save-movie-playlist`, {
-      userId,
-      movie,
-      playlistLink,
-    });
+    const response = await axios.post(
+      `https://api.spotify.com/v1/users/${userId}/playlists`,
+      { name: playlistName, public: false },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
     return response.data;
   } catch (error) {
-    console.error("Error saving movie playlist:", error.response?.data || error.message);
-    throw error;
+    console.error("Error creating playlist:", error.response?.data || error.message);
+    return null;
   }
 };
 
-export const fetchUserMoviePlaylists = async (userId) => {
-  const BASE_URL =
-    process.env.NODE_ENV === "production"
-      ? "https://soufico.onrender.com/api/users"
-      : "http://localhost:3000/api/users";
+export const fetchUserPlaylists = async () => {
+  const accessToken = await ensureValidAccessToken();
+  if (!accessToken) return null;
 
   try {
-    const response = await axios.get(`${BASE_URL}/fetch-movie-playlists/${userId}`);
-    return response.data;
+    const response = await axios.get("https://api.spotify.com/v1/me/playlists", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    return response.data.items; 
   } catch (error) {
-    console.error("Error fetching movie playlists:", error.response?.data || error.message);
-    throw error;
+    console.error("Error fetching user playlists:", error.response?.data || error.message);
+    return null;
   }
 };
 
@@ -128,6 +126,22 @@ export const searchSpotifyTracks = async (query) => {
     return response.data.tracks.items;
   } catch (error) {
     console.error("Error searching Spotify tracks:", error.response?.data || error.message);
+    return null;
+  }
+};
+
+export const getPlaylistDetails = async (playlistId) => {
+  const accessToken = await ensureValidAccessToken();
+  if (!accessToken) return null;
+
+  try {
+    const response = await axios.get(
+      `https://api.spotify.com/v1/playlists/${playlistId}`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching playlist details:", error.response?.data || error.message);
     return null;
   }
 };
