@@ -23,13 +23,17 @@ function MovieDetailsPage() {
 
   useEffect(() => {
     const fetchUserProfileAndPlaylist = async () => {
-      const accessToken = await ensureValidAccessToken();
-      if (!accessToken) return;
-
       try {
+        const accessToken = await ensureValidAccessToken();
+        if (!accessToken) {
+          console.error("Spotify access token is invalid or expired.");
+          return;
+        }
+
         const response = await fetch("https://api.spotify.com/v1/me", {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
+
         if (response.ok) {
           const profile = await response.json();
           setUserProfile(profile);
@@ -45,14 +49,14 @@ function MovieDetailsPage() {
             setUserComment(playlistDetails.userComment || "");
           }
         } else {
-          console.error("Failed to fetch user profile:", response.statusText);
+          console.error("Failed to fetch Spotify profile:", response.statusText);
         }
       } catch (error) {
-        console.error("Error fetching user profile or playlist:", error);
+        console.error("Error fetching Spotify profile or playlist:", error);
       }
     };
 
-    fetchUserProfileAndPlaylist();
+    if (movie) fetchUserProfileAndPlaylist();
   }, [movie?.id]);
 
   const handleCreatePlaylist = async () => {
@@ -79,10 +83,7 @@ function MovieDetailsPage() {
       setPlaylistLink(`https://open.spotify.com/embed/playlist/${playlist.id}`);
       alert("Playlist created successfully!");
     } catch (error) {
-      console.error(
-        "Error creating playlist:",
-        error.response?.data || error.message
-      );
+      console.error("Error creating Spotify playlist:", error);
       alert("Failed to create the playlist. Please try again.");
     } finally {
       setIsLoading(false);
@@ -94,25 +95,27 @@ function MovieDetailsPage() {
       alert("Create or link a playlist first.");
       return;
     }
-  
+
     if (userRating === "" || userComment === "") {
       alert("Please add a rating and comment.");
       return;
     }
-  
+
     try {
       const userId = userProfile?.id;
       if (!userId) {
         alert("User ID is missing. Please log in.");
         return;
       }
-  
+
       const existingPlaylist = await fetchMoviePlaylistDetails(userId, movie.id);
       if (existingPlaylist) {
-        alert("A playlist for this movie already exists. You cannot save it again.");
+        alert(
+          "A playlist for this movie already exists. You cannot save it again."
+        );
         return;
       }
-  
+
       await saveMoviePlaylist({
         userId,
         movie,
@@ -120,7 +123,7 @@ function MovieDetailsPage() {
         userRating,
         userComment,
       });
-  
+
       alert("Saved to your movie playlist!");
       navigate("/my-playlist");
     } catch (error) {
@@ -128,9 +131,6 @@ function MovieDetailsPage() {
       alert("Failed to save the movie playlist.");
     }
   };
-  
-  
-  
 
   const handleLinkPlaylist = () => {
     if (playlistLink) {
@@ -193,7 +193,7 @@ function MovieDetailsPage() {
               step="0.1"
               placeholder="Rating (0-10)"
               value={userRating}
-              onChange={(e) => setUserRating(parseFloat(e.target.value))}
+              onChange={(e) => setUserRating(e.target.value)}
             />
           </div>
           <div className="playlist-section">

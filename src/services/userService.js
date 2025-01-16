@@ -5,19 +5,21 @@ const BASE_URL =
     ? "https://soufico.onrender.com/api/users"
     : "https://flowershop-3e9f1.web.app/api/users";
 
-    export const saveMoviePlaylist = async ({ userId, movie, playlistLink }) => {
-        try {
-          const response = await axios.post(`${BASE_URL}/save-movie-playlist`, {
-            userId,
-            movie,
-            playlistLink,
-          });
-          return response.data;
-        } catch (error) {
-          console.error("Error saving movie playlist:", error.response?.data || error.message);
-          throw error;
-        }
-      };
+export const saveMoviePlaylist = async ({ userId, movie, playlistLink, userRating, userComment }) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/save-movie-playlist`, {
+      userId,
+      movie,
+      playlistLink,
+      userRating,
+      userComment,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error saving movie playlist:", error.response?.data || error.message);
+    throw error;
+  }
+};
 
 export const fetchUserMoviePlaylists = async (userId) => {
   try {
