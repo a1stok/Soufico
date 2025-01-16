@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { createPlaylist, ensureValidAccessToken } from "../services/spotifyService";
-import { saveMoviePlaylist } from "../services/userService"; 
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  createPlaylist,
+  ensureValidAccessToken,
+} from "../services/spotifyService";
+import {
+  saveMoviePlaylist,
+  fetchMoviePlaylistDetails,
+} from "../services/userService";
 import "./MovieDetailsPage.css";
 
 function MovieDetailsPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const movie = location.state?.movie || null;
 
   const [playlistLink, setPlaylistLink] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
+  const [userRating, setUserRating] = useState("");
+  const [userComment, setUserComment] = useState("");
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchUserProfileAndPlaylist = async () => {
       const accessToken = await ensureValidAccessToken();
       if (!accessToken) return;
 
@@ -24,16 +33,27 @@ function MovieDetailsPage() {
         if (response.ok) {
           const profile = await response.json();
           setUserProfile(profile);
+
+          const userId = profile.id;
+          const playlistDetails = await fetchMoviePlaylistDetails(
+            userId,
+            movie.id
+          );
+          if (playlistDetails) {
+            setPlaylistLink(playlistDetails.playlistLink);
+            setUserRating(playlistDetails.userRating || "");
+            setUserComment(playlistDetails.userComment || "");
+          }
         } else {
           console.error("Failed to fetch user profile:", response.statusText);
         }
       } catch (error) {
-        console.error("Error fetching user profile:", error);
+        console.error("Error fetching user profile or playlist:", error);
       }
     };
 
-    fetchUserProfile();
-  }, []);
+    fetchUserProfileAndPlaylist();
+  }, [movie.id]);
 
   const handleCreatePlaylist = async () => {
     if (!userProfile) {
@@ -43,7 +63,10 @@ function MovieDetailsPage() {
 
     setIsLoading(true);
     try {
-      const playlist = await createPlaylist(userProfile.id, `${movie.title} Playlist`);
+      const playlist = await createPlaylist(
+        userProfile.id,
+        `${movie.title} Playlist`
+      );
       if (!playlist) {
         alert("Failed to create playlist. Please try again.");
         return;
@@ -51,7 +74,10 @@ function MovieDetailsPage() {
       setPlaylistLink(`https://open.spotify.com/embed/playlist/${playlist.id}`);
       alert("Playlist created successfully!");
     } catch (error) {
-      console.error("Error creating playlist:", error.response?.data || error.message);
+      console.error(
+        "Error creating playlist:",
+        error.response?.data || error.message
+      );
       alert("Failed to create the playlist. Please try again.");
     } finally {
       setIsLoading(false);
@@ -63,27 +89,29 @@ function MovieDetailsPage() {
       alert("Create or link a playlist first.");
       return;
     }
-  
+
     try {
       const userId = userProfile?.id;
       if (!userId) {
         alert("User ID is missing. Please log in.");
         return;
       }
-  
+
       await saveMoviePlaylist({
         userId,
         movie,
         playlistLink,
+        userRating,
+        userComment,
       });
-  
+
       alert("Saved to your movie playlist!");
+      navigate("/my-playlist");
     } catch (error) {
       console.error("Error saving movie playlist:", error);
       alert("Failed to save the movie playlist.");
     }
   };
-  
 
   const handleLinkPlaylist = () => {
     const userInput = prompt("Paste your Spotify playlist link here:");
@@ -140,6 +168,22 @@ function MovieDetailsPage() {
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy"
               ></iframe>
+              <div className="rating-section">
+                <textarea
+                  placeholder="Write your comment here..."
+                  value={userComment}
+                  onChange={(e) => setUserComment(e.target.value)}
+                ></textarea>
+                <input
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  placeholder="Rating (0-10)"
+                  value={userRating}
+                  onChange={(e) => setUserRating(parseFloat(e.target.value))}
+                />
+              </div>
               <button className="save-button" onClick={handleSaveToPlaylist}>
                 Save to Your Movie Playlist
               </button>

@@ -11,13 +11,10 @@ const MyCollectionPage = () => {
   useEffect(() => {
     const fetchCollections = async () => {
       try {
-        setLoading(true);
-        setError("");
-        const userId = localStorage.getItem("spotify_user_id"); 
+        const userId = localStorage.getItem("spotify_user_id");
         if (!userId) throw new Error("User ID is missing.");
 
         const data = await fetchUserMoviePlaylists(userId);
-        console.log("Fetched collections:", data); 
         setCollections(data);
       } catch (error) {
         console.error("Error fetching collections:", error);
@@ -30,39 +27,38 @@ const MyCollectionPage = () => {
     fetchCollections();
   }, []);
 
+  if (loading) return <p>Loading your playlists...</p>;
+  if (error) return <p className="error-message">{error}</p>;
+
   return (
     <div className="my-collection-page">
       <h1>My Movie Playlist</h1>
-      {loading ? (
-        <p>Loading your playlists...</p>
-      ) : error ? (
-        <p className="error-message">{error}</p>
-      ) : collections.length > 0 ? (
-        <ul className="collection-list">
-          {collections.map((item, index) => (
-            <li key={index} className="collection-item">
-              <Link
-                to={`/movie/${item.movie.id}`}
-                state={{ movie: item.movie }}
-                className="movie-link"
-              >
-                <div className="movie-item">
-                  <img
-                    src={`https://image.tmdb.org/t/p/w200${item.movie.poster_path}`}
-                    alt={item.movie.title}
-                    className="movie-poster"
-                  />
-                  <div className="movie-info">
-                    <h3>{item.movie.title}</h3>
-                    <p>{item.movie.release_date}</p>
-                  </div>
-                </div>
-              </Link>
-            </li>
+      {collections.length > 0 ? (
+        <div className="collection-grid">
+          {collections.map((item) => (
+            <Link
+              to={`/movie/${item.movie.id}`}
+              state={{ movie: item.movie }}
+              key={item.movie.id}
+              className="collection-card"
+            >
+              <img
+                src={`https://image.tmdb.org/t/p/w200${item.movie.poster_path}`}
+                alt={item.movie.title}
+                className="movie-poster"
+              />
+              <div className="card-content">
+                <h3>{item.movie.title}</h3>
+                <p><strong>Comment:</strong> {item.userComment || "No comment yet."}</p>
+              </div>
+            </Link>
           ))}
-        </ul>
+        </div>
       ) : (
-        <p>No movies saved yet. Start adding movies to your playlist!</p>
+        <div className="no-playlists">
+          <h2>Your Spotify Playlists</h2>
+          <p>You don't have any playlists yet.</p>
+        </div>
       )}
     </div>
   );

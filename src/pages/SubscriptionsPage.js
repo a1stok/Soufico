@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSpotifyAuthUrl, ensureValidAccessToken, fetchUserPlaylists } from "../services/spotifyService";
+import {
+  getSpotifyAuthUrl,
+  ensureValidAccessToken,
+  fetchUserPlaylists,
+} from "../services/spotifyService";
 import { searchMovies } from "../services/tmdbService";
 import "./SubscriptionsPage.css";
 
@@ -146,26 +150,22 @@ const SubscriptionsPage = () => {
         ))}
       </div>
 
-      {userProfile && (
+      {userProfile && playlists.length > 0 && (
         <div className="playlists-section">
           <h2>Your Spotify Playlists</h2>
-          {playlists.length > 0 ? (
-            <ul className="playlist-list">
-              {playlists.map((playlist) => (
-                <li key={playlist.id} className="playlist-item">
-                  <a
-                    href={playlist.external_urls.spotify}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {playlist.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>You don't have any playlists yet.</p>
-          )}
+          <ul className="playlist-list">
+            {playlists.map((playlist) => (
+              <li key={playlist.id} className="playlist-item">
+                <a
+                  href={playlist.external_urls.spotify}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {playlist.name}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

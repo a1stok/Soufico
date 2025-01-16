@@ -1,70 +1,71 @@
 .my-collection-page {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-  }
-  
-  .my-collection-page h1 {
-    font-size: 28px;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .collection-list {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  
-  .collection-item {
-    flex: 1 1 calc(25% - 20px);
-    box-sizing: border-box;
-    text-align: center;
-  }
-  
-  .movie-link {
-    text-decoration: none;
-    color: inherit;
-  }
-  
-  .movie-item {
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
-  }
-  
-  .movie-item:hover {
-    transform: translateY(-5px);
-  }
-  
-  .movie-poster {
-    width: 100%;
-    height: auto;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .movie-info {
-    padding: 10px;
-  }
-  
-  .movie-info h3 {
-    font-size: 18px;
-    margin: 0;
-    color: #333;
-  }
-  
-  .movie-info p {
-    margin: 5px 0 0;
-    font-size: 14px;
-    color: #777;
-  }
-  
-  .error-message {
-    color: red;
-    font-size: 16px;
-  }
-  
+  padding: 20px;
+  font-family: 'Jura', serif;
+  background: linear-gradient(135deg, #fdfdfd, #cfcfdf);
+  text-align: center;
+}
+
+.my-collection-page h1 {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  justify-content: center;
+}
+
+.glass-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-container:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+}
+
+.movie-poster {
+  width: 100%;
+  height: auto;
+  border-radius: 15px;
+  margin-bottom: 15px;
+}
+
+.card-content {
+  text-align: center;
+}
+
+.movie-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #0d172a;
+}
+
+.card-content p {
+  font-size: 1rem;
+  color: #555;
+}
+
+.no-playlists {
+  text-align: center;
+  margin-top: 50px;
+  color: #555;
+}
+
+.no-playlists h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: #333;
+}

@@ -69,10 +69,10 @@ router.post("/basket", async (req, res) => {
 
 // Save Movie Playlist
 router.post("/save-movie-playlist", async (req, res) => {
-  const { userId, movie, playlistLink } = req.body;
+  const { userId, movie, playlistLink, userRating, userComment } = req.body;
 
   if (!userId || !movie || !playlistLink) {
-    return res.status(400).json({ error: "Missing required fields: userId, movie, or playlistLink." });
+    return res.status(400).json({ error: "Missing required fields." });
   }
 
   try {
@@ -80,18 +80,30 @@ router.post("/save-movie-playlist", async (req, res) => {
     const usersCollection = db.collection("users");
 
     const result = await usersCollection.updateOne(
-      { uid: userId },
-      { $push: { moviePlaylists: { movie, playlistLink, savedAt: new Date() } } },
+      { uid: userId, "moviePlaylists.movie.id": movie.id },
+      {
+        $set: {
+          "moviePlaylists.$.playlistLink": playlistLink,
+          "moviePlaylists.$.userRating": userRating,
+          "moviePlaylists.$.userComment": userComment,
+        },
+        $setOnInsert: {
+          "moviePlaylists.$.movie": movie,
+          "moviePlaylists.$.savedAt": new Date(),
+        },
+      },
       { upsert: true }
     );
 
-    console.log("Save result:", result); 
+    console.log("Save result:", result);
     res.status(200).json({ message: "Movie playlist saved successfully!" });
   } catch (error) {
     console.error("Error saving movie playlist:", error);
     res.status(500).json({ error: "Failed to save movie playlist." });
   }
 });
+
+
 
 
 // Fetch Movie Playlists
@@ -133,21 +145,22 @@ router.post("/rate-movie", async (req, res) => {
 
     const result = await usersCollection.updateOne(
       { uid: userId, "moviePlaylists.movie.id": movieId },
-      { 
-        $set: { 
-          "moviePlaylists.$.userRating": userRating, 
-          "moviePlaylists.$.userComment": userComment 
-        }
+      {
+        $set: {
+          "moviePlaylists.$.userRating": userRating,
+          "moviePlaylists.$.userComment": userComment,
+        },
       }
     );
 
-    console.log("Rating save result:", result);
+    console.log("Rating and comment save result:", result);
     res.status(200).json({ message: "Comment and rating saved successfully!" });
   } catch (error) {
     console.error("Error saving comment and rating:", error);
     res.status(500).json({ error: "Failed to save comment and rating." });
   }
 });
+
 
 // Fetch Comments and Ratings
 router.get("/fetch-comments/:userId/:movieId", async (req, res) => {
@@ -166,16 +179,17 @@ router.get("/fetch-comments/:userId/:movieId", async (req, res) => {
       { projection: { "moviePlaylists.$": 1 } }
     );
 
-    if (!user || !user.moviePlaylists) {
+    if (!user || !user.moviePlaylists || user.moviePlaylists.length === 0) {
       return res.status(404).json({ error: "Movie or playlist not found." });
     }
 
     res.status(200).json(user.moviePlaylists[0]);
   } catch (error) {
-    console.error("Error fetching comments and ratings:", error);
-    res.status(500).json({ error: "Failed to fetch comments and ratings." });
+    console.error("Error fetching movie and playlist:", error);
+    res.status(500).json({ error: "Failed to fetch movie and playlist." });
   }
 });
+
 
 // Complete Purchase
 router.post("/complete-purchase", async (req, res) => {

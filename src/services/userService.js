@@ -29,6 +29,16 @@ export const fetchUserMoviePlaylists = async (userId) => {
   }
 };
 
+export const fetchMoviePlaylistDetails = async (userId, movieId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/fetch-comments/${userId}/${movieId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching movie playlist details:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
 export const rateMovie = async ({ userId, movieId, userRating, userComment }) => {
   try {
     const response = await axios.post(`${BASE_URL}/rate-movie`, {
