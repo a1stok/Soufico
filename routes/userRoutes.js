@@ -2,9 +2,8 @@ const express = require("express");
 const { getDB } = require("../db");
 const router = express.Router();
 
+// Save Spotify User Profile
 router.post("/save", async (req, res) => {
-  console.log("POST /save - Request received:", req.body);
-
   const { uid, name, photoURL } = req.body;
 
   if (!uid || !name || !photoURL) {
@@ -14,7 +13,6 @@ router.post("/save", async (req, res) => {
       !photoURL && "photoURL",
     ].filter(Boolean);
 
-    console.log("POST /save - Missing fields:", missingFields);
     return res.status(400).json({
       error: `Missing required fields: ${missingFields.join(", ")}`,
     });
@@ -24,13 +22,12 @@ router.post("/save", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    console.log("POST /save - Connecting to MongoDB...");
     await usersCollection.updateOne(
       { uid },
       { $set: { name, photoURL, lastUpdated: new Date() } },
       { upsert: true }
     );
-    console.log("POST /save - User data saved successfully.");
+
     res.status(200).json({ message: "User data saved successfully!" });
   } catch (error) {
     console.error("Error saving user data:", error);
@@ -38,9 +35,8 @@ router.post("/save", async (req, res) => {
   }
 });
 
+// Save Basket
 router.post("/basket", async (req, res) => {
-  console.log("POST /basket - Request received:", req.body);
-
   const { uid, basket } = req.body;
 
   if (!uid || !basket) {
@@ -49,7 +45,6 @@ router.post("/basket", async (req, res) => {
       !basket && "basket",
     ].filter(Boolean);
 
-    console.log("POST /basket - Missing fields:", missingFields);
     return res.status(400).json({
       error: `Missing required fields: ${missingFields.join(", ")}`,
     });
@@ -59,14 +54,12 @@ router.post("/basket", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    console.log("POST /basket - Updating basket for uid:", uid);
     await usersCollection.updateOne(
       { uid },
       { $set: { basket, lastUpdated: new Date() } },
       { upsert: true }
     );
 
-    console.log("POST /basket - Basket data saved successfully.");
     res.status(200).json({ message: "Basket data saved successfully!" });
   } catch (error) {
     console.error("Error saving basket data:", error);
@@ -74,13 +67,12 @@ router.post("/basket", async (req, res) => {
   }
 });
 
-router.post("/order", async (req, res) => {
-  const { uid, basket } = req.body;
+// Save Movie Playlist
+router.post("/save-movie-playlist", async (req, res) => {
+  const { userId, movie, playlistLink } = req.body;
 
-  if (!uid || !basket) {
-    return res.status(400).json({
-      error: "Missing required fields: uid or basket",
-    });
+  if (!userId || !movie || !playlistLink) {
+    return res.status(400).json({ error: "Missing required fields: userId, movie, or playlistLink." });
   }
 
   try {
@@ -88,23 +80,106 @@ router.post("/order", async (req, res) => {
     const usersCollection = db.collection("users");
 
     await usersCollection.updateOne(
-      { uid },
-      { $set: { basket, lastUpdated: new Date() } },
+      { uid: userId },
+      { $push: { moviePlaylists: { movie, playlistLink, savedAt: new Date() } } },
       { upsert: true }
     );
 
-    res.status(200).json({ message: "Order placed successfully!" });
+    res.status(200).json({ message: "Movie playlist saved successfully!" });
   } catch (error) {
-    console.error("Error placing order:", error);
-    res.status(500).json({ error: "Failed to place order." });
+    console.error("Error saving movie playlist:", error);
+    res.status(500).json({ error: "Failed to save movie playlist." });
   }
 });
 
+// Fetch Movie Playlists
+router.get("/fetch-movie-playlists/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ error: "Missing required field: userId." });
+  }
+
+  try {
+    const db = getDB();
+    const usersCollection = db.collection("users");
+
+    const user = await usersCollection.findOne({ uid: userId }, { projection: { moviePlaylists: 1 } });
+
+    if (!user || !user.moviePlaylists) {
+      return res.status(404).json({ error: "No movie playlists found for this user." });
+    }
+
+    res.status(200).json(user.moviePlaylists);
+  } catch (error) {
+    console.error("Error fetching movie playlists:", error);
+    res.status(500).json({ error: "Failed to fetch movie playlists." });
+  }
+});
+
+// Save Comment and Rating
+router.post("/rate-movie", async (req, res) => {
+  const { userId, movieId, userRating, userComment } = req.body;
+
+  if (!userId || !movieId || userRating === undefined || !userComment) {
+    return res.status(400).json({ error: "Missing required fields: userId, movieId, userRating, or userComment." });
+  }
+
+  try {
+    const db = getDB();
+    const usersCollection = db.collection("users");
+
+    await usersCollection.updateOne(
+      { uid: userId, "moviePlaylists.movie.id": movieId },
+      { 
+        $set: { 
+          "moviePlaylists.$.userRating": userRating, 
+          "moviePlaylists.$.userComment": userComment 
+        }
+      }
+    );
+
+    res.status(200).json({ message: "Comment and rating saved successfully!" });
+  } catch (error) {
+    console.error("Error saving comment and rating:", error);
+    res.status(500).json({ error: "Failed to save comment and rating." });
+  }
+});
+
+// Fetch Comments and Ratings
+router.get("/fetch-comments/:userId/:movieId", async (req, res) => {
+  const { userId, movieId } = req.params;
+
+  if (!userId || !movieId) {
+    return res.status(400).json({ error: "Missing required fields: userId or movieId." });
+  }
+
+  try {
+    const db = getDB();
+    const usersCollection = db.collection("users");
+
+    const user = await usersCollection.findOne(
+      { uid: userId, "moviePlaylists.movie.id": parseInt(movieId) },
+      { projection: { "moviePlaylists.$": 1 } }
+    );
+
+    if (!user || !user.moviePlaylists) {
+      return res.status(404).json({ error: "Movie or playlist not found." });
+    }
+
+    res.status(200).json(user.moviePlaylists[0]);
+  } catch (error) {
+    console.error("Error fetching comments and ratings:", error);
+    res.status(500).json({ error: "Failed to fetch comments and ratings." });
+  }
+});
+
+// Complete Purchase
 router.post("/complete-purchase", async (req, res) => {
   const { uid, basket, transactionId } = req.body;
 
   if (!uid || !basket || !transactionId) {
-    return res.status(400).json({ error: "Missing required fields: uid, basket, or transactionId" });
+    return res.status(400).json({ error: "Missing required fields: uid, basket, or transactionId." });
   }
 
   try {
@@ -119,14 +194,14 @@ router.post("/complete-purchase", async (req, res) => {
     const purchases = basket.map((item) => ({
       ...item,
       transactionId,
-      purchaseDate: new Date().toISOString(), 
+      purchaseDate: new Date().toISOString(),
     }));
 
     await usersCollection.updateOne(
       { uid },
       {
-        $set: { basket: [] }, 
-        $push: { purchases: { $each: purchases, $position: 0 } }, 
+        $set: { basket: [] },
+        $push: { purchases: { $each: purchases, $position: 0 } },
       }
     );
 
@@ -137,7 +212,7 @@ router.post("/complete-purchase", async (req, res) => {
   }
 });
 
-
+// Get User Data
 router.get("/:uid", async (req, res) => {
   const { uid } = req.params;
 
@@ -148,8 +223,6 @@ router.get("/:uid", async (req, res) => {
   try {
     const db = getDB();
     const usersCollection = db.collection("users");
-
-    console.log("GET /:uid - Fetching data for uid:", uid);
 
     const user = await usersCollection.findOne({ uid });
     if (!user) {
@@ -163,6 +236,7 @@ router.get("/:uid", async (req, res) => {
   }
 });
 
+// Delete User
 router.delete("/:uid", async (req, res) => {
   const { uid } = req.params;
 
@@ -174,11 +248,7 @@ router.delete("/:uid", async (req, res) => {
     const db = getDB();
     const usersCollection = db.collection("users");
 
-    console.log("DELETE /:uid - Deleting user with uid:", uid);
-
     const result = await usersCollection.deleteOne({ uid });
-
-    console.log("DELETE /:uid - MongoDB result:", result);
 
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: "User not found." });
@@ -187,7 +257,7 @@ router.delete("/:uid", async (req, res) => {
     return res.status(200).json({ message: "User deleted successfully!" });
   } catch (error) {
     console.error("Error deleting user data:", error);
-    return res.status(500).json({ error: "Failed to delete user." });
+    res.status(500).json({ error: "Failed to delete user." });
   }
 });
 

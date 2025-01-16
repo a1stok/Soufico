@@ -9,7 +9,8 @@ import ShopPage from "./pages/ShopPage";
 import SubscriptionsPage from "./pages/SubscriptionsPage";
 import SpotifyCallback from "./pages/SpotifyCallback";
 import MyAccountPage from "./pages/MyAccountPage";
-import MovieDetailsPage from "./pages/MovieDetailsPage"; // New movie details page
+import MovieDetailsPage from "./pages/MovieDetailsPage";
+import MyCollectionPage from "./pages/MyCollectionPage"; // New My Collection page
 import CheckoutForm from "./components/CheckoutForm";
 
 function App() {
@@ -24,8 +25,9 @@ function App() {
         <Route path="/shop" element={<ShopPage />} />
         <Route path="/my-account" element={<MyAccountPage />} />
         <Route path="/subscriptions" element={<SubscriptionsPage />} />
-        <Route path="/callback" element={<SpotifyCallback />} />
+        <Route path="/my-playlist" element={<MyCollectionPage />} /> {/* Added My Playlist route */}
         <Route path="/movie/:id" element={<MovieDetailsPage />} />
+        <Route path="/callback" element={<SpotifyCallback />} />
         <Route path="/checkout" element={<CheckoutForm />} />
       </Routes>
     </Router>

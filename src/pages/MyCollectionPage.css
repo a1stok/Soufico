@@ -1,0 +1,32 @@
+
+.my-collection-page {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+  }
+  
+  .my-collection-page h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .collection-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .collection-list li {
+    margin: 10px 0;
+    font-size: 18px;
+  }
+  
+  .collection-list li a {
+    text-decoration: none;
+    color: #0073e6;
+  }
+  
+  .collection-list li a:hover {
+    text-decoration: underline;
+    color: #005bb5;
+  }
+  

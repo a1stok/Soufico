@@ -12,6 +12,7 @@ const Navbar = () => {
         <li><Link to="/">Home</Link></li>
         <li><Link to="/shop">Shop</Link></li>
         <li><Link to="/subscriptions">Film Playlist</Link></li>
+        <li><Link to="/my-playlist">My Playlist</Link></li>
         <li><Link to="/about">About</Link></li>
         <li><Link to="/my-account">My Account</Link></li>
         <li><Link to="/login">Login</Link></li>

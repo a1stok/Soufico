@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { createPlaylist, ensureValidAccessToken } from "../services/spotifyService";
+import { saveMoviePlaylist } from "../services/userService"; // New service
 import "./MovieDetailsPage.css";
 
 function MovieDetailsPage() {
@@ -54,6 +55,25 @@ function MovieDetailsPage() {
       alert("Failed to create the playlist. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSaveToPlaylist = async () => {
+    if (!playlistLink) {
+      alert("Create or link a playlist first.");
+      return;
+    }
+
+    try {
+      await saveMoviePlaylist({
+        movie,
+        playlistLink,
+        userId: userProfile.id,
+      });
+      alert("Saved to your movie playlist!");
+    } catch (error) {
+      console.error("Error saving movie playlist:", error);
+      alert("Failed to save the movie playlist.");
     }
   };
 
@@ -112,6 +132,9 @@ function MovieDetailsPage() {
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy"
               ></iframe>
+              <button className="save-button" onClick={handleSaveToPlaylist}>
+                Save to Your Movie Playlist
+              </button>
             </div>
           ) : (
             <div className="playlist-actions">

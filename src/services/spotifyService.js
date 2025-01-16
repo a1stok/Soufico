@@ -24,14 +24,44 @@ export const ensureValidAccessToken = async () => {
     const response = await axios.get("https://api.spotify.com/v1/me", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    if (response.status === 200) return accessToken;
+
+    if (response.status === 200) {
+      const userProfile = response.data;
+      await saveSpotifyUser({
+        uid: userProfile.id,
+        name: userProfile.display_name,
+        photoURL: userProfile.images?.[0]?.url || "",
+      });
+
+      return accessToken;
+    }
   } catch (error) {
     if (error.response?.status === 401) {
       localStorage.removeItem("spotify_access_token");
       window.location.href = getSpotifyAuthUrl();
     }
+    console.error("Error ensuring valid access token:", error);
   }
   return null;
+};
+
+export const saveSpotifyUser = async ({ uid, name, photoURL }) => {
+  const BASE_URL =
+    process.env.NODE_ENV === "production"
+      ? "https://soufico.onrender.com/api/users"
+      : "http://localhost:3000/api/users";
+
+  try {
+    const response = await axios.post(`${BASE_URL}/save`, {
+      uid,
+      name,
+      photoURL,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error saving Spotify user:", error.response?.data || error.message);
+    throw error;
+  }
 };
 
 export const createPlaylist = async (userId, playlistName) => {
@@ -62,6 +92,39 @@ export const fetchUserPlaylists = async () => {
     return response.data;
   } catch (error) {
     console.error("Error fetching user playlists:", error.response?.data || error.message);
+    return null;
+  }
+};
+
+export const addTracksToPlaylist = async (playlistId, trackUris) => {
+  const accessToken = await ensureValidAccessToken();
+  if (!accessToken) return null;
+
+  try {
+    const response = await axios.post(
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+      { uris: trackUris },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error adding tracks to playlist:", error.response?.data || error.message);
+    return null;
+  }
+};
+
+export const searchSpotifyTracks = async (query) => {
+  const accessToken = await ensureValidAccessToken();
+  if (!accessToken) return null;
+
+  try {
+    const response = await axios.get(
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=20`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    return response.data.tracks.items;
+  } catch (error) {
+    console.error("Error searching Spotify tracks:", error.response?.data || error.message);
     return null;
   }
 };
