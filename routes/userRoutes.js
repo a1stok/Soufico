@@ -188,17 +188,17 @@ router.get("/fetch-comments/:userId/:movieId", async (req, res) => {
       { projection: { "moviePlaylists.$": 1 } }
     );
 
-    if (!user || !user.moviePlaylists || user.moviePlaylists.length === 0) {
-      console.error(`Movie or playlist not found for userId: ${userId}, movieId: ${movieId}`);
+    if (!user || !user.moviePlaylists) {
       return res.status(404).json({ error: "Movie or playlist not found." });
     }
 
     res.status(200).json(user.moviePlaylists[0]);
   } catch (error) {
-    console.error("Error fetching movie and playlist:", error);
-    res.status(500).json({ error: "Failed to fetch movie and playlist." });
+    console.error("Error fetching comments:", error);
+    res.status(500).json({ error: "Failed to fetch comments." });
   }
 });
+
 
 
 
