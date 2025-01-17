@@ -3,17 +3,22 @@ const { MongoClient } = require("mongodb");
 
 console.log("MONGO_URI:", process.env.MONGO_URI);
 
-let db;
-const client = new MongoClient(process.env.MONGO_URI, {
-  maxPoolSize: 10, 
-});
+let db; 
+let client; 
 
 async function connectToDB() {
   try {
-    if (!db) {
+    if (!client) {
+      client = new MongoClient(process.env.MONGO_URI, {
+        maxPoolSize: 10, 
+      });
       await client.connect();
-      db = client.db("Soufico"); 
-      console.log("Connected to MongoDB");
+      console.log("MongoDB Client connected.");
+    }
+
+    if (!db) {
+      db = client.db("Soufico");
+      console.log("Connected to database: Soufico");
     }
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
@@ -23,9 +28,18 @@ async function connectToDB() {
 
 function getDB() {
   if (!db) {
-    throw new Error("Database not connected!");
+    throw new Error("Database not connected! Please call connectToDB first.");
   }
   return db;
 }
 
-module.exports = { connectToDB, getDB };
+async function disconnectDB() {
+  if (client) {
+    await client.close();
+    console.log("MongoDB Client disconnected.");
+    db = null; 
+    client = null; 
+  }
+}
+
+module.exports = { connectToDB, getDB, disconnectDB };

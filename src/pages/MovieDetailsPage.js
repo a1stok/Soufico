@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   createPlaylist,
@@ -108,14 +108,7 @@ function MovieDetailsPage() {
         return;
       }
 
-      const existingPlaylist = await fetchMoviePlaylistDetails(userId, movie.id);
-      if (existingPlaylist) {
-        alert(
-          "A playlist for this movie already exists. You cannot save it again."
-        );
-        return;
-      }
-
+      // Save the playlist and associate it with the movie
       await saveMoviePlaylist({
         userId,
         movie,
@@ -125,7 +118,10 @@ function MovieDetailsPage() {
       });
 
       alert("Saved to your movie playlist!");
-      navigate("/my-playlist");
+
+      // Update the state with saved details
+      setUserRating(userRating);
+      setUserComment(userComment);
     } catch (error) {
       console.error("Error saving movie playlist:", error);
       alert("Failed to save the movie playlist.");
@@ -146,7 +142,6 @@ function MovieDetailsPage() {
       alert(`Invalid URL format: ${error.message}`);
     }
   };
-  
 
   if (!movie) {
     return <p>No movie details available. Please go back and select a movie.</p>;

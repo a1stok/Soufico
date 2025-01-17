@@ -38,7 +38,7 @@ const MyCollectionPage = () => {
           {collections.map((item) => (
             <Link
               to={`/movie/${item.movie.id}`}
-              state={{ movie: item.movie }}
+              state={{ movie: { ...item.movie, playlistLink: item.playlistLink, userComment: item.userComment, userRating: item.userRating } }}
               key={item.movie.id}
               className="collection-card"
             >
@@ -50,6 +50,7 @@ const MyCollectionPage = () => {
               <div className="card-content">
                 <h3>{item.movie.title}</h3>
                 <p><strong>Comment:</strong> {item.userComment || "No comment yet."}</p>
+                <p><strong>Rating:</strong> {item.userRating || "Not rated yet."}</p>
               </div>
             </Link>
           ))}
