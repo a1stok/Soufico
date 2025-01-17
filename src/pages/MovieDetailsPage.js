@@ -108,13 +108,13 @@ function MovieDetailsPage() {
         return;
       }
 
-      //const existingPlaylist = await fetchMoviePlaylistDetails(userId, movie.id);
-      //if (existingPlaylist) {
-      //  alert(
-       //   "A playlist for this movie already exists. You cannot save it again."
-      //  );
-      //  return;
-     // }
+      const existingPlaylist = await fetchMoviePlaylistDetails(userId, movie.id);
+      if (existingPlaylist) {
+        alert(
+          "A playlist for this movie already exists. You cannot save it again."
+        );
+        return;
+      }
 
       await saveMoviePlaylist({
         userId,
