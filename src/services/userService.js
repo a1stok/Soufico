@@ -5,8 +5,15 @@ const BASE_URL =
     ? "https://soufico.onrender.com/api/users"
     : "https://flowershop-3e9f1.web.app/api/users";
 
-export const saveMoviePlaylist = async ({ userId, movie, playlistLink, userRating, userComment }) => {
+const logError = (message, error) => {
+  console.error(message, error.response?.data || error.message);
+};
+
+export const saveMoviePlaylist = async ({ userId, movie, playlistLink, userRating = null, userComment = "" }) => {
   try {
+    if (!userId || !movie || !playlistLink) {
+      throw new Error("Required parameters missing for saving playlist.");
+    }
     const response = await axios.post(`${BASE_URL}/save-movie-playlist`, {
       userId,
       movie,
@@ -16,33 +23,45 @@ export const saveMoviePlaylist = async ({ userId, movie, playlistLink, userRatin
     });
     return response.data;
   } catch (error) {
-    console.error("Error saving movie playlist:", error.response?.data || error.message);
+    logError("Error saving movie playlist:", error);
     throw error;
   }
 };
 
 export const fetchUserMoviePlaylists = async (userId) => {
   try {
+    if (!userId) {
+      throw new Error("userId is required to fetch playlists.");
+    }
     const response = await axios.get(`${BASE_URL}/fetch-movie-playlists/${userId}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching movie playlists:", error.response?.data || error.message);
+    logError(`Error fetching playlists for user ${userId}:`, error);
     throw error;
   }
 };
 
 export const fetchMoviePlaylistDetails = async (userId, movieId) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/fetch-comments/${userId}/${movieId}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching movie playlist details:", error.response?.data || error.message);
-    throw error;
-  }
-};
+    try {
+      const response = await axios.get(`${BASE_URL}/movie-playlists/${userId}/${movieId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching movie playlist details:", {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+      throw error;
+    }
+  };
+  
+  
 
 export const rateMovie = async ({ userId, movieId, userRating, userComment }) => {
   try {
+    if (!userId || !movieId || userRating == null || userComment == null) {
+      throw new Error("Required parameters missing for rating movie.");
+    }
     const response = await axios.post(`${BASE_URL}/rate-movie`, {
       userId,
       movieId,
@@ -51,17 +70,23 @@ export const rateMovie = async ({ userId, movieId, userRating, userComment }) =>
     });
     return response.data;
   } catch (error) {
-    console.error("Error rating movie:", error.response?.data || error.message);
+    logError("Error rating movie:", error);
     throw error;
   }
 };
 
 export const fetchMovieCommentsAndRatings = async (userId, movieId) => {
   try {
+    if (!userId || !movieId) {
+      throw new Error("Both userId and movieId are required.");
+    }
     const response = await axios.get(`${BASE_URL}/fetch-comments/${userId}/${movieId}`);
+    if (!response || !response.data) {
+      throw new Error("Invalid response from server.");
+    }
     return response.data;
   } catch (error) {
-    console.error("Error fetching comments and ratings:", error.response?.data || error.message);
+    logError("Error fetching comments and ratings:", error);
     throw error;
   }
 };

@@ -80,16 +80,16 @@ router.post("/save-movie-playlist", async (req, res) => {
     const usersCollection = db.collection("users");
 
     await usersCollection.updateOne(
-      { uid: userId, "moviePlaylists.movie.id": movie.id },
+      { uid: userId },
       {
-        $set: {
-          "moviePlaylists.$.playlistLink": playlistLink,
-          "moviePlaylists.$.userRating": userRating || null,
-          "moviePlaylists.$.userComment": userComment || null,
-        },
-        $setOnInsert: {
-          "moviePlaylists.$.movie": movie,
-          "moviePlaylists.$.savedAt": new Date(),
+        $push: {
+          moviePlaylists: {
+            movie,
+            playlistLink,
+            userRating: userRating || null,
+            userComment: userComment || null,
+            savedAt: new Date(),
+          },
         },
       },
       { upsert: true }
@@ -101,9 +101,6 @@ router.post("/save-movie-playlist", async (req, res) => {
     res.status(500).json({ error: "Failed to save movie playlist." });
   }
 });
-
-
-
 
 // Fetch Movie Playlists
 router.get("/fetch-movie-playlists/:userId", async (req, res) => {
@@ -160,7 +157,6 @@ router.post("/rate-movie", async (req, res) => {
   }
 });
 
-
 // Fetch Comments and Ratings
 router.get("/fetch-comments/:userId/:movieId", async (req, res) => {
   const { userId, movieId } = req.params;
@@ -174,7 +170,7 @@ router.get("/fetch-comments/:userId/:movieId", async (req, res) => {
     const usersCollection = db.collection("users");
 
     const user = await usersCollection.findOne(
-      { uid: userId, "moviePlaylists.movie.id": parseInt(movieId) },
+      { uid: userId, "moviePlaylists.movie.id": movieId },
       { projection: { "moviePlaylists.$": 1 } }
     );
 
@@ -188,9 +184,6 @@ router.get("/fetch-comments/:userId/:movieId", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch comments." });
   }
 });
-
-
-
 
 // Complete Purchase
 router.post("/complete-purchase", async (req, res) => {

@@ -133,25 +133,20 @@ function MovieDetailsPage() {
   };
 
   const handleLinkPlaylist = () => {
-    if (playlistLink) {
-      alert("A playlist is already associated with this movie.");
-      return;
-    }
-
     const userInput = prompt("Paste your Spotify playlist link here:");
     try {
       const url = new URL(userInput);
-      if (url.hostname !== "open.spotify.com") {
-        alert("Invalid Spotify link. Please enter a valid playlist link.");
-        return;
+      if (!url.hostname.includes("spotify.com") || !url.pathname.includes("/playlist/")) {
+        throw new Error("Invalid Spotify playlist URL.");
       }
-      const playlistId = url.pathname.split("/").pop();
+      const playlistId = url.pathname.split("/playlist/")[1];
       setPlaylistLink(`https://open.spotify.com/embed/playlist/${playlistId}`);
       alert("Playlist linked successfully!");
     } catch (error) {
-      alert("Invalid URL format. Please try again.");
+      alert(`Invalid URL format: ${error.message}`);
     }
   };
+  
 
   if (!movie) {
     return <p>No movie details available. Please go back and select a movie.</p>;
