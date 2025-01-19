@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"; 
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   createPlaylist,
   ensureValidAccessToken,
@@ -12,7 +12,6 @@ import "./MovieDetailsPage.css";
 
 function MovieDetailsPage() {
   const location = useLocation();
-  const navigate = useNavigate();
   const movie = location.state?.movie || null;
 
   const [playlistLink, setPlaylistLink] = useState("");
@@ -57,7 +56,7 @@ function MovieDetailsPage() {
     };
 
     if (movie) fetchUserProfileAndPlaylist();
-  }, [movie?.id]);
+  }, [movie]);
 
   const handleCreatePlaylist = async () => {
     if (!userProfile) {

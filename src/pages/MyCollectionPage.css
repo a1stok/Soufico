@@ -1,76 +1,180 @@
 .my-collection-page {
   padding: 20px;
   font-family: 'Jura', serif;
-  background: linear-gradient(135deg, #fdfdfd, #cfcfdf);
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
   text-align: center;
 }
 
 .my-collection-page h1 {
-  font-size: 2.5rem;
-  margin-bottom: 30px;
+  font-size: 2.4rem;
+  margin-bottom: 25px;
   color: #333;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .user-info {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
   margin-bottom: 30px;
+  gap: 15px;
 }
 
 .user-avatar {
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  object-fit: cover;
 }
 
 .collection-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
   justify-content: center;
 }
 
-.glass-container {
+.movie-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-decoration: none;
-  color: inherit;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 15px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  padding: 20px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.4);
+  width: 220px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-.glass-container:hover {
-  transform: scale(1.02);
-  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+.movie-card:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
 .movie-poster {
-  width: 100%;
-  height: auto;
-  border-radius: 15px;
-  margin-bottom: 15px;
-}
-
-.card-content {
-  text-align: center;
-}
-
-.movie-title {
-  font-size: 1.5rem;
+  width: 160px;
+  height: 240px;
+  border-radius: 10px;
+  object-fit: cover;
   margin-bottom: 10px;
+}
+
+.movie-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.movie-info h3 {
+  margin: 10px 0;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.movie-info p {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.details-content {
+  text-align: center;
+  max-width: 500px;
+}
+
+.details-content h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
   color: #0d172a;
 }
 
-.card-content p {
+.details-content p {
   font-size: 1rem;
   color: #555;
+  margin-bottom: 10px;
+}
+
+.centered-content {
+  margin-top: 20px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.action-button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f3f3f3;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.action-button:hover {
+  background-color: #e1e1e1;
+}
+
+.spotify-playlist {
+  margin: 20px auto;
+  text-align: center;
+}
+
+.edit-section {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.edit-section label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.edit-section input {
+  width: 80%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.save-button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  padding: 10px 20px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.save-button:hover {
+  background-color: #45a049;
+}
+
+.cancel-button:hover {
+  background-color: #e53935;
 }
 
 .no-playlists {
@@ -83,43 +187,4 @@
   font-size: 1.8rem;
   margin-bottom: 10px;
   color: #333;
-}
-
-.edit-section {
-  margin-top: 20px;
-  text-align: left;
-}
-
-.edit-section label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: bold;
-}
-
-.edit-section input,
-.edit-section textarea {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 15px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-}
-
-.save-button,
-.cancel-button {
-  padding: 10px 20px;
-  margin-right: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.save-button {
-  background-color: #4caf50;
-  color: white;
-}
-
-.cancel-button {
-  background-color: #f44336;
-  color: white;
 }
