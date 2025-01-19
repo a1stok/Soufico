@@ -108,7 +108,7 @@ const MyCollectionPage = () => {
           {collections.map((item) => (
             <div
               key={item.movie.id}
-              className="collection-card"
+              className="collection-card glass-container"
               onClick={() => setSelectedMovie(item)}
             >
               <img
@@ -117,7 +117,7 @@ const MyCollectionPage = () => {
                 className="movie-poster"
               />
               <div className="card-content">
-                <h3>{item.movie.title}</h3>
+                <h3 className="movie-title">{item.movie.title}</h3>
                 <p><strong>Rating:</strong> {item.userRating || "Not rated yet."}</p>
               </div>
             </div>
