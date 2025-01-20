@@ -72,25 +72,6 @@ const MyCollectionPage = () => {
     setSelectedMovie(null);
   };
 
-  const handleChangeRating = () => {
-    const newRating = parseFloat(
-      prompt("Enter your new rating (0-10 in increments of 0.5):", selectedMovie.userRating || "")
-    );
-
-    if (newRating >= 0 && newRating <= 10 && newRating % 0.5 === 0) {
-      setSelectedMovie((prev) => ({ ...prev, userRating: newRating }));
-    } else {
-      alert("Invalid rating! Please enter a value between 0 and 10 in increments of 0.5.");
-    }
-  };
-
-  const handleChangeComment = () => {
-    const newComment = prompt("Enter your new comment:", selectedMovie.userComment || "");
-    if (newComment !== null) {
-      setSelectedMovie((prev) => ({ ...prev, userComment: newComment }));
-    }
-  };
-
   if (loading)
     return (
       <div className="loading-container">
@@ -146,20 +127,37 @@ const MyCollectionPage = () => {
               <br />
               {selectedMovie.movie.overview}
             </p>
-            <p><strong>Personal Rating:</strong> {selectedMovie.userRating || "Not rated yet."}</p>
             <p>
-              <strong>Your Comment:</strong>{" "}
-              {selectedMovie.userComment.length > 100
-                ? `${selectedMovie.userComment.slice(0, 100)}...`
-                : selectedMovie.userComment || "No comment yet."}
+              <strong>Personal Rating:</strong>
+              <input
+                type="number"
+                min="0"
+                max="10"
+                step="0.5"
+                value={selectedMovie.userRating || ""}
+                onChange={(e) =>
+                  setSelectedMovie((prev) => ({
+                    ...prev,
+                    userRating: parseFloat(e.target.value),
+                  }))
+                }
+                placeholder="Rate between 0 and 10"
+              />
+            </p>
+            <p>
+              <strong>Your Comment:</strong>
+              <textarea
+                value={selectedMovie.userComment || ""}
+                onChange={(e) =>
+                  setSelectedMovie((prev) => ({
+                    ...prev,
+                    userComment: e.target.value,
+                  }))
+                }
+                placeholder="Write your comment here"
+              ></textarea>
             </p>
             <div className="action-buttons">
-              <button onClick={handleChangeRating} className="action-button">
-                Change Your Rating
-              </button>
-              <button onClick={handleChangeComment} className="action-button">
-                Change Your Comment
-              </button>
               <button
                 onClick={handleEditMovieDetails}
                 className="action-button save-button"
