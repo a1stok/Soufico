@@ -70,6 +70,17 @@
   margin-bottom: 15px;
 }
 
+.TrackListWidget_trackListGridContainer__GZGxh {
+  width: 300px;
+  height: 300px;
+  border-radius: 12px;
+  margin: 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
 .movie-info h3 {
   font-size: 1.5rem;
   color: #0d172a;
@@ -80,33 +91,25 @@
   font-size: 1rem;
   color: #555;
   margin: 5px 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .movie-details {
   display: flex;
-  gap: 40px;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
   padding: 30px;
   border-radius: 15px;
   background: rgba(255, 255, 255, 0.6);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
-.movie-details-layout {
-  display: flex;
-  gap: 30px;
-}
-
-.spotify-playlist-section iframe {
-  width: 300px;
-  height: 300px;
-  border-radius: 12px;
-}
-
 .details-content {
   max-width: 600px;
-  text-align: left;
+  text-align: center;
 }
 
 .details-content h2 {
@@ -137,11 +140,11 @@
   font-weight: 600;
   color: #0d172a;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.3s ease;
+  transition: background 0.3s ease, transform 0.3s ease, color 0.3s ease;
 }
 
 .action-button:hover {
-  background: #4caf50;
+  background: navy;
   color: #fff;
   transform: scale(1.05);
 }

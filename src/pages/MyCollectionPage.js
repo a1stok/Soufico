@@ -37,9 +37,14 @@ const MyCollectionPage = () => {
   };
 
   const handleChangeRating = () => {
-    const newRating = prompt("Enter your new rating (0-10):", selectedMovie.userRating || "");
-    if (newRating !== null) {
+    const newRating = parseFloat(
+      prompt("Enter your new rating (0-10 in increments of 0.5):", selectedMovie.userRating || "")
+    );
+
+    if (newRating >= 0 && newRating <= 10 && newRating % 0.5 === 0) {
       setSelectedMovie((prev) => ({ ...prev, userRating: newRating }));
+    } else {
+      alert("Invalid rating! Please enter a value between 0 and 10 in increments of 0.5.");
     }
   };
 
@@ -95,7 +100,12 @@ const MyCollectionPage = () => {
             <h2>{selectedMovie.movie.title}</h2>
             <p><strong>Description:</strong> {selectedMovie.movie.overview}</p>
             <p><strong>Personal Rating:</strong> {selectedMovie.userRating || "Not rated yet."}</p>
-            <p><strong>Your Comment:</strong> {selectedMovie.userComment || "No comment yet."}</p>
+            <p>
+              <strong>Your Comment:</strong>{" "}
+              {selectedMovie.userComment.length > 100
+                ? `${selectedMovie.userComment.slice(0, 100)}...`
+                : selectedMovie.userComment || "No comment yet."}
+            </p>
             <div className="action-buttons">
               <button onClick={handleChangeRating} className="action-button">
                 Change Your Rating
@@ -146,7 +156,12 @@ const MyCollectionPage = () => {
               <div className="movie-info">
                 <h3>{item.movie.title}</h3>
                 <p><strong>Rating:</strong> {item.userRating || "Not rated yet."}</p>
-                <p><strong>Review:</strong> {item.userComment || "No review yet."}</p>
+                <p>
+                  <strong>Review:</strong>{" "}
+                  {item.userComment.length > 50
+                    ? `${item.userComment.slice(0, 50)}...`
+                    : item.userComment || "No review yet."}
+                </p>
               </div>
             </div>
           ))}
