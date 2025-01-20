@@ -72,6 +72,25 @@ const MyCollectionPage = () => {
     setSelectedMovie(null);
   };
 
+  const handleChangeRating = () => {
+    const newRating = parseFloat(
+      prompt("Enter your new rating (0-10 in increments of 0.5):", selectedMovie.userRating || "")
+    );
+
+    if (newRating >= 0 && newRating <= 10 && newRating % 0.5 === 0) {
+      setSelectedMovie((prev) => ({ ...prev, userRating: newRating }));
+    } else {
+      alert("Invalid rating! Please enter a value between 0 and 10 in increments of 0.5.");
+    }
+  };
+
+  const handleChangeComment = () => {
+    const newComment = prompt("Enter your new comment:", selectedMovie.userComment || "");
+    if (newComment !== null) {
+      setSelectedMovie((prev) => ({ ...prev, userComment: newComment }));
+    }
+  };
+
   if (loading)
     return (
       <div className="loading-container">
@@ -83,17 +102,20 @@ const MyCollectionPage = () => {
 
   return (
     <div className="my-collection-page">
-      <h1>My Movie Playlist</h1>
-      <div className="user-info">
-        <div className="user-profile">
-          <img
-            src={userProfile.photo}
-            alt="User Avatar"
-            className="user-avatar"
-          />
-          <h2>{userProfile.name}</h2>
+      <div className="header-section">
+        <h1>My Movie Playlist</h1>
+        <div className="user-info">
+          <div className="user-profile">
+            <img
+              src={userProfile.photo}
+              alt="User Avatar"
+              className="user-avatar"
+            />
+            <h2>{userProfile.name}</h2>
+          </div>
         </div>
       </div>
+      
       {selectedMovie ? (
         <div className="movie-details">
           <div className="movie-details-layout">
@@ -101,7 +123,7 @@ const MyCollectionPage = () => {
               <img
                 src={`https://image.tmdb.org/t/p/w500${selectedMovie.movie.poster_path}`}
                 alt={selectedMovie.movie.title}
-                className="movie-poster-large"
+                className="movie-poster-details"
               />
             </div>
             <div className="spotify-playlist-section">
@@ -116,51 +138,36 @@ const MyCollectionPage = () => {
                   className="spotify-iframe"
                 ></iframe>
               ) : (
-                <p>No playlist linked to this movie yet.</p>
+                <p className="no-playlist-message">No playlist linked to this movie yet.</p>
               )}
             </div>
           </div>
           <div className="details-content">
             <h2>{selectedMovie.movie.title}</h2>
-            <p>
+            <p className="movie-description">
               <strong>Description:</strong>
               <br />
               {selectedMovie.movie.overview}
             </p>
-            <p>
-              <strong>Personal Rating:</strong>
-              <input
-                type="number"
-                min="0"
-                max="10"
-                step="0.5"
-                value={selectedMovie.userRating || ""}
-                onChange={(e) =>
-                  setSelectedMovie((prev) => ({
-                    ...prev,
-                    userRating: parseFloat(e.target.value),
-                  }))
-                }
-                placeholder="Rate between 0 and 10"
-              />
+            <p className="rating-display">
+              <strong>Personal Rating:</strong> {selectedMovie.userRating || "Not rated yet."}
             </p>
-            <p>
-              <strong>Your Comment:</strong>
-              <textarea
-                value={selectedMovie.userComment || ""}
-                onChange={(e) =>
-                  setSelectedMovie((prev) => ({
-                    ...prev,
-                    userComment: e.target.value,
-                  }))
-                }
-                placeholder="Write your comment here"
-              ></textarea>
+            <p className="comment-display">
+              <strong>Your Comment:</strong>{" "}
+              {selectedMovie.userComment.length > 100
+                ? `${selectedMovie.userComment.slice(0, 100)}...`
+                : selectedMovie.userComment || "No comment yet."}
             </p>
             <div className="action-buttons">
+              <button onClick={handleChangeRating} className="button-81 button-sponsor">
+                Change Your Rating
+              </button>
+              <button onClick={handleChangeComment} className="button-81 button-playlist">
+                Change Your Comment
+              </button>
               <button
                 onClick={handleEditMovieDetails}
-                className="action-button save-button"
+                className="button-81"
               >
                 Save Changes
               </button>
@@ -172,23 +179,25 @@ const MyCollectionPage = () => {
           {collections.map((item) => (
             <div
               key={item.movie.id}
-              className="collection-card large-card"
+              className="collection-card"
               onClick={() => setSelectedMovie(item)}
             >
-              <img
-                src={`https://image.tmdb.org/t/p/w200${item.movie.poster_path}`}
-                alt={item.movie.title}
-                className="movie-poster-large"
-              />
-              <div className="movie-info">
-                <h3>{item.movie.title}</h3>
-                <p><strong>Rating:</strong> {item.userRating || "Not rated yet."}</p>
-                <p>
-                  <strong>Review:</strong>{" "}
-                  {item.userComment.length > 50
-                    ? `${item.userComment.slice(0, 50)}...`
-                    : item.userComment || "No review yet."}
-                </p>
+              <div className="card-content">
+                <img
+                  src={`https://image.tmdb.org/t/p/w200${item.movie.poster_path}`}
+                  alt={item.movie.title}
+                  className="movie-poster"
+                />
+                <div className="movie-info">
+                  <h3>{item.movie.title}</h3>
+                  <p className="rating"><strong>Rating:</strong> {item.userRating || "Not rated yet."}</p>
+                  <p className="review">
+                    <strong>Review:</strong>{" "}
+                    {item.userComment.length > 50
+                      ? `${item.userComment.slice(0, 50)}...`
+                      : item.userComment || "No review yet."}
+                  </p>
+                </div>
               </div>
             </div>
           ))}
