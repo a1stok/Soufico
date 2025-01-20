@@ -59,9 +59,10 @@
   width: 100%;
   max-width: 400px;
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .rating-comment textarea {
@@ -77,39 +78,97 @@
 }
 
 .action-button,
-.save-button {
+.save-button,
+.create-button,
+.link-button {
   background: rgba(255, 255, 255, 0.3);
-  border: 1px solid #ddd;
-  padding: 10px 20px;
+  border: none;
   border-radius: 8px;
+  padding: 12px 14px;
   font-size: 1rem;
   font-weight: 600;
   color: #0d172a;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.3s ease, color 0.3s ease;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  text-align: center;
 }
 
 .action-button:hover,
-.save-button:hover {
-  background: #0d172a;
-  color: #fff;
-  transform: scale(1.05);
-}
-
-.create-button {
-  background: #4caf50;
-  color: #fff;
-}
-
 .create-button:hover {
-  background: #45a049;
-}
-
-.link-button {
-  background: #f44336;
-  color: #fff;
+  background: #202830d3;
+  color: #e7e7e7;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .link-button:hover {
   background: #e53935;
+  color: #fff;
+}
+
+.save-button:hover {
+  background: #4caf50;
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.save-button {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.button-81 {
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0d172a;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.button-81:hover {
+  background: #202830d3;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  color: #e7e7e7;
+}
+
+.button-sponsor:hover {
+  background: #70605ec4;
+  color: #e7e7e7;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.button-playlist:hover {
+  background: rgba(219, 68, 68, 0.822);
+  color: #e7e7e7;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(255, 71, 71, 0.15);
+}
+
+.order-button {
+  background: #e7e7e7;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0d172a;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.order-button:hover {
+  background: #202830d3;
+  color: #e7e7e7;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }

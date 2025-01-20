@@ -12,7 +12,7 @@
   padding: 20px;
   border: 1px solid #b9b9b9;
   border-radius: 15px;
-  background: rgba(240, 248, 255, 0.7); /* Light blue-gray color */
+  background: linear-gradient(135deg, #fdfdfd, #cfcfdf); 
   width: 260px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background 0.3s ease-in-out;
@@ -21,7 +21,7 @@
 }
 
 .movie-card:hover {
-  background: rgba(34, 193, 195, 0.8); /* Turquoise hover color */
+  background: rgba(255, 255, 255, 0.9); 
   transform: translateY(-5px);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
 }
@@ -39,7 +39,7 @@
 
 .movie-card:hover .movie-poster {
   opacity: 1;
-  filter: contrast(1.2) brightness(1.1) saturate(1.4) drop-shadow(1.7px 3.4px 5.1px rgba(0, 0, 0, 0.5));
+  filter: contrast(1.2) brightness(1.2) saturate(1.4) drop-shadow(1.7px 3.4px 5.1px rgba(0, 0, 0, 0.5)); 
 }
 
 .movie-info {
@@ -196,13 +196,12 @@
 
 .action-buttons {
   display: flex;
-  gap: 20px;
+  gap: 10px;
   justify-content: center;
-  margin-top: 30px;
   flex-wrap: wrap;
 }
 
-.button-81 {
+.button-save {
   background: rgba(255, 255, 255, 0.3);
   border: none;
   border-radius: 8px;
@@ -216,8 +215,29 @@
   min-width: 150px;
 }
 
-.button-81:hover {
+.button-save:hover {
   background: rgba(7, 160, 45, 0.842);
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  color: #e7e7e7;
+}
+
+.button-other {
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0d172a;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-width: 150px;
+}
+
+.button-other:hover {
+  background: #202830d3; 
   transform: scale(1.05);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   color: #e7e7e7;
@@ -244,7 +264,8 @@
     align-items: center;
   }
 
-  .button-81 {
+  .button-save,
+  .button-other {
     width: 100%;
     max-width: 300px;
   }
