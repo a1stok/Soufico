@@ -41,9 +41,12 @@
 }
 
 .movie-info p {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #555;
   margin: 5px 0;
+  text-align: center;
+  line-height: 1.5;
+  max-width: 350px;
 }
 
 .movie-actions {
@@ -96,16 +99,17 @@
 }
 
 .action-button:hover,
-.create-button:hover {
+.create-button:hover,
+.link-button:hover {
   background: #202830d3;
   color: #e7e7e7;
   transform: scale(1.05);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.link-button:hover {
-  background: #e53935;
-  color: #fff;
+.save-button {
+  background: rgba(255, 255, 255, 0.3);
+  min-width: 200px;
 }
 
 .save-button:hover {
@@ -113,10 +117,6 @@
   color: #fff;
   transform: scale(1.05);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.save-button {
-  background: rgba(255, 255, 255, 0.3);
 }
 
 .button-81 {
@@ -130,6 +130,7 @@
   cursor: pointer;
   transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
 }
 
 .button-81:hover {
