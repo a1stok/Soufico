@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import {
   createPlaylist,
@@ -107,7 +107,6 @@ function MovieDetailsPage() {
         return;
       }
 
-      // Save the playlist and associate it with the movie
       await saveMoviePlaylist({
         userId,
         movie,
@@ -118,7 +117,6 @@ function MovieDetailsPage() {
 
       alert("Saved to your movie playlist!");
 
-      // Update the state with saved details
       setUserRating(userRating);
       setUserComment(userComment);
     } catch (error) {
@@ -194,7 +192,7 @@ function MovieDetailsPage() {
                   src={playlistLink}
                   width="100%"
                   height="360"
-                  style={{ borderRadius: "8px" }}
+                  className="playlist-iframe"
                   frameBorder="0"
                   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                   loading="lazy"

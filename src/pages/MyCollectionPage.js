@@ -125,14 +125,14 @@ const MyCollectionPage = () => {
             </div>
             <div className="spotify-playlist-section">
               {selectedMovie.playlistLink ? (
-                <iframe
-                  title="Spotify Playlist"
-                  src={selectedMovie.playlistLink}
-                  width="300"
-                  height="300"
-                  frameBorder="0"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                ></iframe>
+                <a
+                  href={selectedMovie.playlistLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="spotify-link"
+                >
+                  Open Spotify Playlist
+                </a>
               ) : (
                 <p>No playlist linked to this movie yet.</p>
               )}
@@ -140,7 +140,11 @@ const MyCollectionPage = () => {
           </div>
           <div className="details-content">
             <h2>{selectedMovie.movie.title}</h2>
-            <p><strong>Description:</strong> {selectedMovie.movie.overview}</p>
+            <p>
+              <strong>Description:</strong>
+              <br />
+              {selectedMovie.movie.overview}
+            </p>
             <p><strong>Personal Rating:</strong> {selectedMovie.userRating || "Not rated yet."}</p>
             <p>
               <strong>Your Comment:</strong>{" "}
@@ -155,30 +159,6 @@ const MyCollectionPage = () => {
               <button onClick={handleChangeComment} className="action-button">
                 Change Your Comment
               </button>
-            </div>
-            <div className="edit-section">
-              <label>Update Playlist Link:</label>
-              <input
-                type="text"
-                value={selectedMovie.playlistLink || ""}
-                onChange={(e) =>
-                  setSelectedMovie((prev) => ({ ...prev, playlistLink: e.target.value }))
-                }
-              />
-              <div className="action-buttons">
-                <button
-                  onClick={() => handleEditMovieDetails(selectedMovie)}
-                  className="action-button save-button"
-                >
-                  Save Changes
-                </button>
-                <button
-                  onClick={() => setSelectedMovie(null)}
-                  className="action-button cancel-button"
-                >
-                  Cancel
-                </button>
-              </div>
             </div>
           </div>
         </div>
