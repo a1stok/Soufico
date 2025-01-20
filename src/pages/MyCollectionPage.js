@@ -63,10 +63,10 @@ const MyCollectionPage = () => {
     fetchCollections();
   }, []);
 
-  const handleEditMovieDetails = (updatedItem) => {
+  const handleEditMovieDetails = () => {
     setCollections((prev) =>
       prev.map((item) =>
-        item.movie.id === updatedItem.movie.id ? { ...item, ...updatedItem } : item
+        item.movie.id === selectedMovie.movie.id ? { ...item, ...selectedMovie } : item
       )
     );
     setSelectedMovie(null);
@@ -125,14 +125,15 @@ const MyCollectionPage = () => {
             </div>
             <div className="spotify-playlist-section">
               {selectedMovie.playlistLink ? (
-                <a
-                  href={selectedMovie.playlistLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="spotify-link"
-                >
-                  Open Spotify Playlist
-                </a>
+                <iframe
+                  title="Spotify Playlist"
+                  src={selectedMovie.playlistLink}
+                  width="400"
+                  height="380"
+                  frameBorder="0"
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  className="spotify-iframe"
+                ></iframe>
               ) : (
                 <p>No playlist linked to this movie yet.</p>
               )}
@@ -158,6 +159,12 @@ const MyCollectionPage = () => {
               </button>
               <button onClick={handleChangeComment} className="action-button">
                 Change Your Comment
+              </button>
+              <button
+                onClick={handleEditMovieDetails}
+                className="action-button save-button"
+              >
+                Save Changes
               </button>
             </div>
           </div>
