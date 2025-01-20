@@ -76,12 +76,12 @@ const MyCollectionPage = () => {
                 className="movie-poster-large"
               />
             </div>
-            <div className="spotify-playlist-section TrackListWidget_trackListGridContainer__GZGxh">
+            <div className="spotify-playlist-section">
               {selectedMovie.playlistLink ? (
                 <iframe
                   title="Spotify Playlist"
                   src={selectedMovie.playlistLink}
-                  width="100%"
+                  width="300"
                   height="400"
                   frameBorder="0"
                   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
@@ -133,13 +133,13 @@ const MyCollectionPage = () => {
           {collections.map((item) => (
             <div
               key={item.movie.id}
-              className="collection-card"
+              className="collection-card large-card"
               onClick={() => setSelectedMovie(item)}
             >
               <img
                 src={`https://image.tmdb.org/t/p/w200${item.movie.poster_path}`}
                 alt={item.movie.title}
-                className="movie-poster"
+                className="movie-poster-large"
               />
               <div className="movie-info">
                 <h3>{item.movie.title}</h3>
