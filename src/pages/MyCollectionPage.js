@@ -7,8 +7,6 @@ const MyCollectionPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const moviesPerPage = 5;
 
   useEffect(() => {
     const fetchCollections = async () => {
@@ -52,12 +50,6 @@ const MyCollectionPage = () => {
     }
   };
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  const indexOfLastMovie = currentPage * moviesPerPage;
-  const indexOfFirstMovie = indexOfLastMovie - moviesPerPage;
-  const currentMovies = collections.slice(indexOfFirstMovie, indexOfLastMovie);
-
   if (loading) return <p>Loading your playlists...</p>;
   if (error) return <p className="error-message">{error}</p>;
 
@@ -84,13 +76,13 @@ const MyCollectionPage = () => {
                 className="movie-poster-large"
               />
             </div>
-            <div className="spotify-playlist-section">
+            <div className="spotify-playlist-section TrackListWidget_trackListGridContainer__GZGxh">
               {selectedMovie.playlistLink ? (
                 <iframe
                   title="Spotify Playlist"
                   src={selectedMovie.playlistLink}
-                  width="300"
-                  height="380"
+                  width="100%"
+                  height="400"
                   frameBorder="0"
                   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 ></iframe>
@@ -136,9 +128,9 @@ const MyCollectionPage = () => {
             </div>
           </div>
         </div>
-      ) : currentMovies.length > 0 ? (
+      ) : collections.length > 0 ? (
         <div className="collection-grid">
-          {currentMovies.map((item) => (
+          {collections.map((item) => (
             <div
               key={item.movie.id}
               className="collection-card"
@@ -163,17 +155,6 @@ const MyCollectionPage = () => {
           <p>You don't have any playlists yet.</p>
         </div>
       )}
-      <div className="pagination">
-        {Array.from({ length: Math.ceil(collections.length / moviesPerPage) }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => paginate(index + 1)}
-            className={`pagination-button ${currentPage === index + 1 ? "active" : ""}`}
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
     </div>
   );
 };
