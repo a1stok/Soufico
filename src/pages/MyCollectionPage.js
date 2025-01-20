@@ -7,6 +7,42 @@ const MyCollectionPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const [userProfile, setUserProfile] = useState({
+    photo: "default-avatar.png",
+    name: "User",
+  });
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch("https://api.spotify.com/v1/me", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("spotify_access_token")}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUserProfile({
+            photo: data.images?.[0]?.url || "default-avatar.png",
+            name: data.display_name || "User",
+          });
+          localStorage.setItem("user_photo", data.images?.[0]?.url || "default-avatar.png");
+          localStorage.setItem("user_name", data.display_name || "User");
+        }
+      } catch (error) {
+        console.error("Error fetching Spotify profile:", error);
+      }
+    };
+
+    if (!localStorage.getItem("user_photo")) {
+      fetchUserProfile();
+    } else {
+      setUserProfile({
+        photo: localStorage.getItem("user_photo"),
+        name: localStorage.getItem("user_name"),
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const fetchCollections = async () => {
@@ -55,7 +91,13 @@ const MyCollectionPage = () => {
     }
   };
 
-  if (loading) return <p>Loading your playlists...</p>;
+  if (loading)
+    return (
+      <div className="loading-container">
+        <p className="loading-message">Loading your playlists...</p>
+      </div>
+    );
+
   if (error) return <p className="error-message">{error}</p>;
 
   return (
@@ -64,11 +106,11 @@ const MyCollectionPage = () => {
       <div className="user-info">
         <div className="user-profile">
           <img
-            src={localStorage.getItem("user_photo") || "default-avatar.png"}
+            src={userProfile.photo}
             alt="User Avatar"
             className="user-avatar"
           />
-          <h2>{localStorage.getItem("user_name") || "User"}</h2>
+          <h2>{userProfile.name}</h2>
         </div>
       </div>
       {selectedMovie ? (
