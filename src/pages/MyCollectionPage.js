@@ -76,13 +76,13 @@ const MyCollectionPage = () => {
                 className="movie-poster-large"
               />
             </div>
-            <div className="spotify-playlist-section TrackListWidget_trackListGridContainer__GZGxh">
+            <div className="spotify-playlist-section">
               {selectedMovie.playlistLink ? (
                 <iframe
                   title="Spotify Playlist"
                   src={selectedMovie.playlistLink}
-                  width="100%"
-                  height="400"
+                  width="300"
+                  height="300"
                   frameBorder="0"
                   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 ></iframe>
@@ -113,18 +113,20 @@ const MyCollectionPage = () => {
                   setSelectedMovie((prev) => ({ ...prev, playlistLink: e.target.value }))
                 }
               />
-              <button
-                onClick={() => handleEditMovieDetails(selectedMovie)}
-                className="save-button"
-              >
-                Save Changes
-              </button>
-              <button
-                onClick={() => setSelectedMovie(null)}
-                className="cancel-button"
-              >
-                Cancel
-              </button>
+              <div className="action-buttons">
+                <button
+                  onClick={() => handleEditMovieDetails(selectedMovie)}
+                  className="action-button save-button"
+                >
+                  Save Changes
+                </button>
+                <button
+                  onClick={() => setSelectedMovie(null)}
+                  className="action-button cancel-button"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -133,13 +135,13 @@ const MyCollectionPage = () => {
           {collections.map((item) => (
             <div
               key={item.movie.id}
-              className="collection-card"
+              className="collection-card large-card"
               onClick={() => setSelectedMovie(item)}
             >
               <img
                 src={`https://image.tmdb.org/t/p/w200${item.movie.poster_path}`}
                 alt={item.movie.title}
-                className="movie-poster"
+                className="movie-poster-large"
               />
               <div className="movie-info">
                 <h3>{item.movie.title}</h3>

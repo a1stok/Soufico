@@ -63,7 +63,7 @@
 }
 
 .movie-poster-large {
-  width: 200px;
+  width: 300px;
   height: 300px;
   border-radius: 10px;
   object-fit: cover;
@@ -99,6 +99,8 @@
 }
 
 .spotify-playlist-section iframe {
+  width: 300px;
+  height: 300px;
   border-radius: 12px;
 }
 
@@ -121,14 +123,12 @@
 
 .action-buttons {
   display: flex;
-  gap: 15px;
+  gap: 20px;
   justify-content: center;
   margin-top: 20px;
 }
 
-.action-button,
-.save-button,
-.cancel-button {
+.action-button {
   background: rgba(255, 255, 255, 0.3);
   border: 1px solid #ddd;
   padding: 10px 15px;
@@ -140,17 +140,20 @@
   transition: background 0.3s ease, transform 0.3s ease;
 }
 
-.action-button:hover,
-.save-button:hover {
-  background: #449747;
+.action-button:hover {
+  background: #4caf50;
   color: #fff;
   transform: scale(1.05);
 }
 
-.cancel-button:hover {
-  background: rgba(219, 68, 68, 0.822);
+.save-button:hover {
+  background: #4caf50;
   color: #fff;
-  transform: scale(1.05);
+}
+
+.cancel-button:hover {
+  background: #f44336;
+  color: #fff;
 }
 
 .edit-section {
