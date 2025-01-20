@@ -63,7 +63,7 @@
 }
 
 .movie-poster-large {
-  width: 200px;
+  width: 300px;
   height: 300px;
   border-radius: 10px;
   object-fit: cover;
@@ -99,6 +99,8 @@
 }
 
 .spotify-playlist-section iframe {
+  width: 300px;
+  height: 300px;
   border-radius: 12px;
 }
 
@@ -123,9 +125,12 @@
   display: flex;
   gap: 15px;
   justify-content: center;
+  margin-top: 20px;
 }
 
-.action-button {
+.action-button,
+.save-button,
+.cancel-button {
   background: rgba(255, 255, 255, 0.3);
   border: 1px solid #ddd;
   padding: 10px 15px;
@@ -143,6 +148,16 @@
   transform: scale(1.05);
 }
 
+.save-button:hover {
+  background: #4caf50;
+  color: #fff;
+}
+
+.cancel-button:hover {
+  background: #f44336;
+  color: #fff;
+}
+
 .edit-section {
   margin-top: 25px;
   text-align: center;
@@ -154,32 +169,6 @@
   margin-bottom: 15px;
   border: 1px solid #ddd;
   border-radius: 5px;
-}
-
-.save-button {
-  background: #4caf50;
-  color: #fff;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.cancel-button {
-  background: #f44336;
-  color: #fff;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.save-button:hover {
-  background: #45a049;
-}
-
-.cancel-button:hover {
-  background: #e53935;
 }
 
 .no-playlists {
