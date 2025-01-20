@@ -7,6 +7,8 @@ const MyCollectionPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const moviesPerPage = 5;
 
   useEffect(() => {
     const fetchCollections = async () => {
@@ -50,6 +52,12 @@ const MyCollectionPage = () => {
     }
   };
 
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const indexOfLastMovie = currentPage * moviesPerPage;
+  const indexOfFirstMovie = indexOfLastMovie - moviesPerPage;
+  const currentMovies = collections.slice(indexOfFirstMovie, indexOfLastMovie);
+
   if (loading) return <p>Loading your playlists...</p>;
   if (error) return <p className="error-message">{error}</p>;
 
@@ -82,7 +90,7 @@ const MyCollectionPage = () => {
                   title="Spotify Playlist"
                   src={selectedMovie.playlistLink}
                   width="300"
-                  height="400"
+                  height="380"
                   frameBorder="0"
                   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 ></iframe>
@@ -128,18 +136,18 @@ const MyCollectionPage = () => {
             </div>
           </div>
         </div>
-      ) : collections.length > 0 ? (
+      ) : currentMovies.length > 0 ? (
         <div className="collection-grid">
-          {collections.map((item) => (
+          {currentMovies.map((item) => (
             <div
               key={item.movie.id}
-              className="collection-card large-card"
+              className="collection-card"
               onClick={() => setSelectedMovie(item)}
             >
               <img
                 src={`https://image.tmdb.org/t/p/w200${item.movie.poster_path}`}
                 alt={item.movie.title}
-                className="movie-poster-large"
+                className="movie-poster"
               />
               <div className="movie-info">
                 <h3>{item.movie.title}</h3>
@@ -155,6 +163,17 @@ const MyCollectionPage = () => {
           <p>You don't have any playlists yet.</p>
         </div>
       )}
+      <div className="pagination">
+        {Array.from({ length: Math.ceil(collections.length / moviesPerPage) }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => paginate(index + 1)}
+            className={`pagination-button ${currentPage === index + 1 ? "active" : ""}`}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
