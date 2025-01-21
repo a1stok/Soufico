@@ -146,8 +146,8 @@ function MovieDetailsPage() {
 
   return (
     <div className="movie-details-page">
-      <div className="movie-details-layout">
-        <div className="movie-description">
+      <div className="movie-details">
+        <div className="movie-details-layout">
           <img
             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
             alt={movie.title}
@@ -166,60 +166,63 @@ function MovieDetailsPage() {
           </div>
         </div>
         <div className="movie-actions">
-          <div className="rating-comment">
-            <h3>Leave a Comment and Rating</h3>
-            <textarea
-              placeholder="Write your comment here..."
-              value={userComment}
-              onChange={(e) => setUserComment(e.target.value)}
-            ></textarea>
-            <input
-              type="number"
-              min="0"
-              max="10"
-              step="0.1"
-              placeholder="Rating (0-10)"
-              value={userRating}
-              onChange={(e) => setUserRating(e.target.value)}
-            />
-          </div>
-          <div className="playlist-section">
-            {playlistLink ? (
-              <>
-                <h3>Spotify Playlist</h3>
-                <iframe
-                  title="Spotify Embed: Recommendation Playlist"
-                  src={playlistLink}
-                  width="100%"
-                  height="360"
-                  className="playlist-iframe"
-                  frameBorder="0"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy"
-                ></iframe>
-              </>
-            ) : (
-              <div className="playlist-actions">
-                <button
-                  className="action-button create-button"
-                  onClick={handleCreatePlaylist}
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Creating Playlist..." : "Create Playlist"}
-                </button>
-                <button
-                  className="action-button link-button"
-                  onClick={handleLinkPlaylist}
-                >
-                  Link Existing Playlist
-                </button>
-              </div>
-            )}
-          </div>
-          <button className="save-button" onClick={handleSaveToPlaylist}>
-            Save to Your Movie Playlist
-          </button>
-        </div>
+  <div className="rating-comment">
+    <h3>Leave a Comment and Rating</h3>
+    <textarea
+      className="auto-textarea"
+      placeholder="Write your comment here..."
+      value={userComment}
+      onChange={(e) => setUserComment(e.target.value)}
+    ></textarea>
+    <input
+      className="rating-input"
+      type="number"
+      min="0"
+      max="10"
+      step="0.5"
+      placeholder="Rating (0-10)"
+      value={userRating}
+      onChange={(e) => setUserRating(e.target.value)}
+    />
+  </div>
+  <div className="playlist-section">
+    {playlistLink ? (
+      <>
+        <h3>Spotify Playlist</h3>
+        <iframe
+          title="Spotify Embed: Recommendation Playlist"
+          src={playlistLink}
+          width="380"
+          height="380"
+          className="playlist-iframe"
+          frameBorder="0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      </>
+    ) : (
+      <div className="playlist-actions">
+        <button
+          className="button-common button-other"
+          onClick={handleCreatePlaylist}
+          disabled={isLoading}
+        >
+          {isLoading ? "Creating Playlist..." : "Create Playlist"}
+        </button>
+        <button
+          className="button-common button-other"
+          onClick={handleLinkPlaylist}
+        >
+          Link Existing Playlist
+        </button>
+      </div>
+    )}
+  </div>
+  <button className="button-common button-save" onClick={handleSaveToPlaylist}>
+    Save to Your Movie Playlist
+  </button>
+</div>
+
       </div>
     </div>
   );

@@ -117,64 +117,61 @@ const MyCollectionPage = () => {
       </div>
       
       {selectedMovie ? (
-        <div className="movie-details">
-          <div className="movie-details-layout">
-            <div className="movie-poster-section">
-              <img
-                src={`https://image.tmdb.org/t/p/w500${selectedMovie.movie.poster_path}`}
-                alt={selectedMovie.movie.title}
-                className="movie-poster-details"
-              />
-            </div>
-            <div className="spotify-playlist-section">
-              {selectedMovie.playlistLink ? (
-                <iframe
-                  title="Spotify Playlist"
-                  src={selectedMovie.playlistLink}
-                  width="400"
-                  height="380"
-                  frameBorder="0"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  className="spotify-iframe"
-                ></iframe>
-              ) : (
-                <p className="no-playlist-message">No playlist linked to this movie yet.</p>
-              )}
-            </div>
-          </div>
-          <div className="details-content">
-            <h2>{selectedMovie.movie.title}</h2>
-            <p className="movie-description">
-              <strong>Description:</strong>
-              <br />
-              {selectedMovie.movie.overview}
-            </p>
-            <p className="rating-display">
-              <strong>Personal Rating:</strong> {selectedMovie.userRating || "Not rated yet."}
-            </p>
-            <p className="comment-display">
-              <strong>Your Comment:</strong>{" "}
-              {selectedMovie.userComment.length > 100
-                ? `${selectedMovie.userComment.slice(0, 100)}...`
-                : selectedMovie.userComment || "No comment yet."}
-            </p>
-            <div className="action-buttons">
-              <button onClick={handleChangeRating} className="button-81 button-sponsor">
-                Change Your Rating
-              </button>
-              <button onClick={handleChangeComment} className="button-81 button-playlist">
-                Change Your Comment
-              </button>
-              <button
-                onClick={handleEditMovieDetails}
-                className="button-81"
-              >
-                Save Changes
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : collections.length > 0 ? (
+  <div className="movie-details">
+    <div className="movie-details-group">
+      <div className="movie-poster-section">
+        <img
+          src={`https://image.tmdb.org/t/p/w500${selectedMovie.movie.poster_path}`}
+          alt={selectedMovie.movie.title}
+          className="movie-poster-details"
+        />
+      </div>
+      <div className="spotify-playlist-section">
+        {selectedMovie.playlistLink ? (
+          <iframe
+            title="Spotify Playlist"
+            src={selectedMovie.playlistLink}
+            width="380"
+            height="380"
+            frameBorder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            className="spotify-iframe"
+          ></iframe>
+        ) : (
+          <p className="no-playlist-message">No playlist linked to this movie yet.</p>
+        )}
+      </div>
+    </div>
+    <div className="details-content">
+      <h2>{selectedMovie.movie.title}</h2>
+      <p className="movie-overview">
+        <strong>Description:</strong>
+        <br />
+        {selectedMovie.movie.overview}
+      </p>
+      <p className="rating-display">
+        <strong>Personal Rating:</strong> {selectedMovie.userRating || "Not rated yet."}
+      </p>
+      <p className="comment-display">
+        <strong>Your Comment:</strong>{" "}
+        {selectedMovie.userComment.length > 100
+          ? `${selectedMovie.userComment.slice(0, 100)}...`
+          : selectedMovie.userComment || "No comment yet."}
+      </p>
+      <div className="action-buttons">
+        <button onClick={handleChangeRating} className="button-other">
+          Change Your Rating
+        </button>
+        <button onClick={handleChangeComment} className="button-other">
+          Change Your Comment
+        </button>
+        <button onClick={handleEditMovieDetails} className="button-save">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+) : collections.length > 0 ? (
         <div className="collection-grid">
           {collections.map((item) => (
             <div
