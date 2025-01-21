@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./ShopPage.css";
 import { auth } from "../firebaseConfig";
 
+
 import letterboxImg from "../images/letterbox.png";
 import sponsormeImg from "../images/sponsorme.jpg";
 import mymediaImg from "../images/mymedia.png";
@@ -94,7 +95,6 @@ const ShopPage = () => {
   };
 
   const basketTotal = basket.reduce((total, item) => total + item.price * item.quantity, 0);
-  
   const handleOrder = async () => {
     if (basket.length === 0) {
       alert("Your basket is empty!");
@@ -118,18 +118,25 @@ const ShopPage = () => {
         body: JSON.stringify({ uid: userId, basket }),
       });
   
-      if (response.ok) {
-        alert("Order placed successfully!");
-        navigate("/my-account", { state: { basket } });
-      } else {
-        const errorData = await response.json();
-        alert(`Failed to place order: ${errorData.error}`);
+      if (!response.ok) {
+        const errorHtml = await response.text();
+        console.error("Server error:", errorHtml);
+        alert(`Order failed: ${response.status} ${response.statusText}`);
+        return;
       }
+  
+      const data = await response.json();
+      alert("Order placed successfully!");
+      navigate("/my-account", { state: { basket } });
     } catch (error) {
       console.error("Error placing order:", error);
       alert("An error occurred while placing the order. Please try again.");
     }
   };
+  
+  
+  
+  
 
   return (
     <div className="shop-page">
@@ -185,30 +192,32 @@ const ShopPage = () => {
         ))}
       </div>
       <div className="basket-summary">
-        <h2>Your Basket</h2>
-        {basket.length > 0 ? (
-          basket.map((item) => (
-            <div key={item.id} className="basket-item">
-              <span className="basket-remove" onClick={() => decreaseQuantity(item.id)}>
-                Remove
-              </span>
-              <img src={item.image} alt={item.name} className="basket-item-image" />
-              <div className="basket-item-text">
-                <h3>
-                  {item.name} {item.id !== 3 && item.quantity > 1 && `x${item.quantity}`}
-                </h3>
-                <p>${(item.price * item.quantity).toFixed(2)}</p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>Your basket is empty.</p>
-        )}
-        <h3 className="basket-total">Total: ${basketTotal.toFixed(2)}</h3>
-        <button className="button-81 order-button" onClick={handleOrder}>
-          Order
-        </button>
+  <h2>Your Basket</h2>
+  {basket.length > 0 ? (
+    basket.map((item) => (
+      <div key={item.id} className="basket-item">
+        <span className="basket-remove" onClick={() => decreaseQuantity(item.id)}>
+          Remove
+        </span>
+        <img src={item.image} alt={item.name} className="basket-item-image" />
+        <div className="basket-item-text">
+          <h3>
+            {item.name} {item.id !== 3 && item.quantity > 1 && `x${item.quantity}`}
+          </h3>
+          <p>${(item.price * item.quantity).toFixed(2)}</p>
+        </div>
       </div>
+    ))
+  ) : (
+    <p>Your basket is empty.</p>
+  )}
+  <h3 className="basket-total">Total: ${basketTotal.toFixed(2)}</h3>
+  <button className="button-81 order-button" onClick={handleOrder}>
+    Order
+  </button>
+</div>
+
+
     </div>
   );
 };
