@@ -125,7 +125,6 @@ const ShopPage = () => {
         return;
       }
   
-      const data = await response.json();
       alert("Order placed successfully!");
       navigate("/my-account", { state: { basket } });
     } catch (error) {

@@ -35,10 +35,10 @@ function AboutPage() {
               <strong>Technologies:</strong> React, Node.js, Express, MongoDB, Firebase, Stripe, Render, RESTful API, Postman
             </p>
             <div className="project-buttons">
-              <a href="https://github.com/soufico" target="_blank" className="project-button" rel="noreferrer">
+              <a href="https://github.com/a1stok/Soufico" target="_blank" className="project-button" rel="noreferrer">
                 View Code
               </a>
-              <a href="https://soufico-demo.com" target="_blank" className="project-button demo" rel="noreferrer">
+              <a href="/" target="_blank" className="project-button demo" rel="noreferrer">
                 View Demo
               </a>
             </div>
@@ -53,10 +53,10 @@ function AboutPage() {
               <strong>Technologies:</strong> React, Flask, Python, TensorFlow, VGG16, XGBoost, Pandas, NumPy, HTML, CSS
             </p>
             <div className="project-buttons">
-              <a href="https://github.com/onkoalert" target="_blank" className="project-button" rel="noreferrer">
+              <a href="https://github.com/a1stok/OncoAlert" target="_blank" className="project-button" rel="noreferrer">
                 View Code
               </a>
-              <a href="https://onkoalert-demo.com" target="_blank" className="project-button demo" rel="noreferrer">
+              <a href="https://devpost.com/software/oncoalert" target="_blank" className="project-button demo" rel="noreferrer">
                 View Demo
               </a>
             </div>
@@ -71,10 +71,7 @@ function AboutPage() {
               <strong>Technologies:</strong> React Native, Expo, Flask, ROS, Python, Raspberry Pi, C++
             </p>
             <div className="project-buttons">
-              <a href="https://github.com/pathmaxer" target="_blank" className="project-button" rel="noreferrer">
-                View Code
-              </a>
-              <a href="https://pathmaxer-demo.com" target="_blank" className="project-button demo" rel="noreferrer">
+              <a href="https://drive.google.com/file/d/1Syy6PHVTQWFim3IKbtDTaFICbMNpA1R4/view?usp=sharing" target="_blank" className="project-button demo" rel="noreferrer">
                 View Demo
               </a>
             </div>
