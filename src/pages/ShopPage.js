@@ -118,13 +118,16 @@ const ShopPage = () => {
         body: JSON.stringify({ uid: userId, basket }),
       });
   
-      if (response.ok) {
-        alert("Order placed successfully!");
-        navigate("/my-account", { state: { basket } });
-      } else {
-        const errorData = await response.json();
-        alert(`Failed to place order: ${errorData.error}`);
+      if (!response.ok) {
+        const errorHtml = await response.text(); 
+        console.error("Server error:", errorHtml); 
+        alert(`Order failed: ${response.status} ${response.statusText}`);
+        return;
       }
+  
+      const data = await response.json();
+      alert("Order placed successfully!");
+      navigate("/my-account", { state: { basket } });
     } catch (error) {
       console.error("Error placing order:", error);
       alert("An error occurred while placing the order. Please try again.");
